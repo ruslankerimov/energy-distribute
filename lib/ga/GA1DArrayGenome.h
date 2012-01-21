@@ -25,9 +25,9 @@ that for common instantiations (float, char).
 #ifndef _ga_array1_h_
 #define _ga_array1_h_
 
-#include <ga/GAArray.h>
-#include <ga/GAGenome.h>
-#include <ga/GAAllele.h>
+#include "GAArray.h"
+#include "GAGenome.h"
+#include "GAAllele.h"
 
 
 /* ----------------------------------------------------------------------------
@@ -175,7 +175,7 @@ protected:
 
 
 #ifdef GALIB_USE_BORLAND_INST
-#include <ga/GA1DArrayGenome.C>
+#include "GA1DArrayGenome.cpp"
 #endif
 
 #endif

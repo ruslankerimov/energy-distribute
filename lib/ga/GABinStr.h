@@ -18,8 +18,8 @@ conditional makes it go from 7.5 seconds to 3.2 seconds (bm bl cs 1024 c 0.9)
 #define _ga_binstr_h_
 
 #include <string.h>
-#include <ga/gatypes.h>
-#include <ga/garandom.h>
+#include "gatypes.h"
+#include "garandom.h"
 
 #define GA_BINSTR_CHUNKSIZE 32	  // size of the chunks of bits we allocate
 

@@ -11,9 +11,9 @@
 #ifndef _ga_error_h_
 #define _ga_error_h_
 
-#include <ga/gatypes.h>
-#include <ga/gaconfig.h>
-#include <ga/std_stream.h>
+#include "gatypes.h"
+#include "gaconfig.h"
+#include "std_stream.h"
 
 // This object is for telling us where in the source code an error occurs.
 class GASourceLocator {
@@ -87,17 +87,17 @@ enum GAErrorIndex {
 //
 // GASimpleGA::function: 
 //   this is the error message
-//   /usr/people/jimmyboy/doughhead.C : XXX
+//   /usr/people/jimmyboy/doughhead.cpp : XXX
 //
 // GAGenome::function: 
 //   primary error message
 //   additional error messages go here
-//   /usr/people/algore/distribute_your_intelligence.C : XXX
+//   /usr/people/algore/distribute_your_intelligence.cpp : XXX
 //
 // MyOwnFunction: 
 //   primary error message
 //   additional error messages go here
-//   /usr/people/algore/distribute_your_intelligence.C : XXX
+//   /usr/people/algore/distribute_your_intelligence.cpp : XXX
 //
 
 void GAErr(const GASourceLocator loc,
