@@ -1,3 +1,6 @@
 [submodule "GAlib"]
 	path = GAlib
 	url = git@github.com:rusKerimov/GAlib.git
+[submodule "lib/ga"]
+	path = lib/ga
+	url = git@github.com:rusKerimov/GAlib.git
