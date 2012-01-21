@@ -93,12 +93,14 @@ int main(int argc, char** argv) {
 				<< "; Pload=" << (*it).Pload << "; Qload=" << (*it).Qload;
 	}
 
+
+
 	n = nodes.size();
 	k = genNodes.size();
 
 	GAParameterList params;
 	GASteadyStateGA::registerDefaultParameters(params);
-	params.set(gaNnGenerations, 200);
+	params.set(gaNnGenerations, 1000);
 	params.set(gaNpopulationSize, 20);
 	params.set(gaNpMutation, 0.3);
 	params.set(gaNpCrossover, 0.8);
@@ -484,7 +486,7 @@ double getFCell(int i, vector <double> x) {
 		if (isForP) {
 			ret = x[0];
 		} else {
-			ret = x[n] - 1;
+			ret = x[n] - (*currentNode).V;
 		}
 		return ret;
 	} else if (isGen && ! isForP) {
@@ -613,10 +615,10 @@ double getSummaryCost(GARealGenome genome, double pBalanceNode) {
 }
 
 void fillData() {
-	ifstream bus_data_file("input/bus_data.txt");
-	ifstream cost_data_file("input/cost_cofficients.txt");
-	ifstream power_limits_file("input/generator_limits.txt");
-	ifstream line_data_file("input/line_data.txt");
+	ifstream bus_data_file("config/input/bus_data.txt");
+	ifstream cost_data_file("config/input/cost_cofficients.txt");
+	ifstream power_limits_file("config/input/generator_limits.txt");
+	ifstream line_data_file("config/input/line_data.txt");
 
 	while( ! bus_data_file.eof()) {
 		node tmp;
