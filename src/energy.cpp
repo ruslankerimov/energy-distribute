@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <ga/ga.h>
+#include "tinyxml/tinyxml.h"
 
 #include "newton.cpp"
 
@@ -68,7 +69,10 @@ double sumQload = 0;	// Потребляемая реактивная мощно
 int n;					// число узлов
 int k;					// число генераторных узлов
 
+
+
 int main(int argc, char** argv) {
+    return 0;
 	fillData();
 
 	cout << endl << "*** Исходные данные ***";
@@ -104,6 +108,7 @@ int main(int argc, char** argv) {
 	params.set(gaNpopulationSize, 20);
 	params.set(gaNpMutation, 0.3);
 	params.set(gaNpCrossover, 0.8);
+
 	params.set(gaNscoreFrequency, 10);
 	params.set(gaNflushFrequency, 50);
 	params.set(gaNselectScores, (int)GAStatistics::AllScores);
@@ -615,10 +620,10 @@ double getSummaryCost(GARealGenome genome, double pBalanceNode) {
 }
 
 void fillData() {
-	ifstream bus_data_file("config/input/bus_data.txt");
-	ifstream cost_data_file("config/input/cost_cofficients.txt");
-	ifstream power_limits_file("config/input/generator_limits.txt");
-	ifstream line_data_file("config/input/line_data.txt");
+	ifstream bus_data_file("data/input/bus_data.txt");
+	ifstream cost_data_file("data/input/cost_cofficients.txt");
+	ifstream power_limits_file("data/input/generator_limits.txt");
+	ifstream line_data_file("data/input/line_data.txt");
 
 	while( ! bus_data_file.eof()) {
 		node tmp;
