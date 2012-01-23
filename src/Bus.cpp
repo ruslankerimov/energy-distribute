@@ -1,8 +1,10 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include "../lib/tinyxml/tinyxml.h"
-#include "../lib/tinyxml/tinystr.h"
+#include "../lib/tinyxml/tinyxml.cpp"
+#include "../lib/tinyxml/tinystr.cpp"
+#include "../lib/tinyxml/tinyxmlerror.cpp"
+#include "../lib/tinyxml/tinyxmlparser.cpp"
 
 using namespace std;
 
@@ -158,16 +160,15 @@ public:
 
 void fillData()
 {
-    TiXmlDocument busData("");
-//    TiXmlElement * buses = busData.FirstChild()->FirstChildElement();
+    TiXmlDocument busData("../data/set_default/bus_data.xml");
+    busData.LoadFile();
+    TiXmlNode * buses = busData.FirstChild("bus-data")->FirstChild("buses");
 
-    cout <<  "Blabla";
+    cout << buses->LastChild("bus")->FirstChild("no")->FirstChild()->Value();
 }
 
 int main()
 {
-    Bus * bus = new Bus(1, 2);
-    std::cout << bus->getVoltage();
 
     fillData();
     return 0;
