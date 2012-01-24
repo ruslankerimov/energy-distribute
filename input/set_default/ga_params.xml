@@ -4,7 +4,7 @@
     <population-size>20</population-size>
     <mutation-probability>0.3</mutation-probability>
     <crossover-probability>0.8</crossover-probability>
-    <score-filename>report/bog.dat</score-filename>
+    <score-filename>output/bog.dat</score-filename>
     <score-frequency>10</score-frequency>
     <score-flush-frequency>50</score-flush-frequency>
 </ga-params>

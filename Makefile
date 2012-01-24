@@ -75,11 +75,12 @@ OUTPUT := energy
 
 all: $(OUTPUT)
 GAlib:
-	$(MAKE) -C lib/ga/
+	$(MAKE) -C lib/ga/ DEBUG=$(DEBUG) PROFILE=$(PROFILE) 
 tinyxml:
-	$(MAKE) -C lib/tinyxml/
+	$(MAKE) -C lib/tinyxml/ TINYXML_USE_STL=YES DEBUG=$(DEBUG) PROFILE=$(PROFILE)
 
 EXTRA_LIBS := -lga
+# lib/tinyxml/tinyxml.o lib/tinyxml/tinystr.o lib/tinyxml/tinyxmlparser.o lib/tinyxml/tinyxmlerror.o
 
 #****************************************************************************
 # Output

@@ -1,10 +1,6 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include "../lib/tinyxml/tinyxml.cpp"
-#include "../lib/tinyxml/tinystr.cpp"
-#include "../lib/tinyxml/tinyxmlerror.cpp"
-#include "../lib/tinyxml/tinyxmlparser.cpp"
 
 using namespace std;
 
@@ -12,21 +8,24 @@ class Bus
 {
 private:
     int no, code;
-    double voltage, angle,
-            activePowerLoad, activePowerGen,
-            reactivePowerLoad, reactivePowerGen,
-            minActivePowerGen, maxActivePowerGen,
-            minReactivePowerGen, maxReactivePowerGen;
-    double costCoefficents[3][5];
+    double angle, minAngle, maxAngle;
+    double voltage, minVoltage, maxVoltage;
+    double activePowerLoad, reactivePowerLoad;
+    double reactivePowerGen, minReactivePowerGen, maxReactivePowerGen;
+    double activePowerGen, minActivePowerGen, maxActivePowerGen;
+    vector <double *> costCoefficents;
+    map <int, Bus *> links;
 
 public:
     Bus(int n, int c)
     {
         no = n;
         code = c;
-        angle = voltage = activePowerLoad = activePowerGen =
-        reactivePowerLoad = reactivePowerGen = minActivePowerGen = maxActivePowerGen =
-        minReactivePowerGen = maxReactivePowerGen = 0;
+        angle = minAngle = maxAngle = 0;
+        voltage = minVoltage = maxVoltage =  0;
+        activePowerLoad = reactivePowerLoad = 0;
+        reactivePowerGen = minReactivePowerGen = maxReactivePowerGen = 0;
+        activePowerGen = minActivePowerGen = maxActivePowerGen = 0;
     }
 
     int getNo()
@@ -36,21 +35,28 @@ public:
 
     double cost()
     {
-        float coefA = costCoefficents[2][2],
-              coefB = costCoefficents[2][3],
-              coefC = costCoefficents[2][4];
+        double ret = 0;
 
-        for (int i = 0; i < 3; ++i)
+        if (this->isGeneratorBus())
         {
-            if (activePowerLoad > costCoefficents[i][0] && activePowerLoad <= costCoefficents[i][1]) {
-                coefA = costCoefficents[i][2];
-                coefB = costCoefficents[i][3];
-                coefC = costCoefficents[i][4];
-                break;
+            double coefA = (*costCoefficents.begin())[2],
+                   coefB = (*costCoefficents.begin())[3],
+                   coefC = (*costCoefficents.begin())[4];
+
+            for (vector <double *>::iterator it = costCoefficents.begin(); it != costCoefficents.end(); ++it)
+            {
+                if (activePowerGen > (*it)[0] && activePowerGen <= (*it)[1]) {
+                    coefA = (*it)[2];
+                    coefB = (*it)[3];
+                    coefC = (*it)[4];
+                    break;
+                }
             }
+
+            ret = coefA * activePowerGen * activePowerGen + coefB * activePowerGen + coefC;
         }
 
-        return coefA * activePowerLoad * activePowerLoad + coefB * activePowerLoad + coefC;
+        return ret;
     }
 
     double getVoltage()
@@ -64,14 +70,11 @@ public:
         return this;
     }
 
-    double getActivePowerGen()
+    Bus * setVoltage(double value, double minV, double maxV)
     {
-        return activePowerGen;
-    }
-
-    Bus * setActivePowerGen(double value)
-    {
-        activePowerGen = value;
+        voltage = value;
+        minVoltage = minV;
+        maxVoltage = maxV;
         return this;
     }
 
@@ -86,7 +89,59 @@ public:
         return this;
     }
 
-    double * getLimits()
+    Bus * setAngle(double value, double minA, double maxA)
+    {
+        angle = value;
+        minAngle = minA;
+        maxAngle = maxA;
+        return this;
+    }
+
+    double getActivePowerGen()
+    {
+        return activePowerGen;
+    }
+
+    Bus * setActivePowerGen(double value)
+    {
+        activePowerGen = value;
+        return this;
+    }
+
+    double getActivePowerLoad()
+    {
+        return activePowerLoad;
+    }
+
+    Bus * setActivePowerLoad(double value)
+    {
+        activePowerLoad = value;
+        return this;
+    }
+
+    double getReactivePowerGen()
+    {
+        return reactivePowerGen;
+    }
+
+    Bus * setReactivePowerGen(double value)
+    {
+        reactivePowerGen = value;
+        return this;
+    }
+
+    double getReactivePowerLoad()
+    {
+        return reactivePowerLoad;
+    }
+
+    Bus * setReactivePowerLoad(double value)
+    {
+        reactivePowerLoad = value;
+        return this;
+    }
+
+    double * getPowerGenLimits()
     {
         double * ret = new double[4];
         ret[0] = minActivePowerGen;
@@ -96,12 +151,27 @@ public:
         return ret;
     }
 
-    Bus * setLimits(double minP, double maxP, double minQ, double maxQ)
+    Bus * setPowerGenLimits(double minP, double maxP, double minQ, double maxQ)
     {
         minActivePowerGen = minP;
         maxActivePowerGen = maxP;
         minReactivePowerGen = minQ;
         maxReactivePowerGen = maxQ;
+        return this;
+    }
+
+    Bus * setCostPart(double minP, double maxP, float A, float B, float C)
+    {
+        double * part = new double[5];
+        part[0] = minP; part[1] = maxP;
+        part[2] = A; part[3] = B; part[4] = C;
+        costCoefficents.push_back(part);
+        return this;
+    }
+
+    Bus * addLinkedBus(Bus * bus)
+    {
+        links[bus->getNo()] = bus;
         return this;
     }
 
@@ -149,27 +219,144 @@ public:
 
         return ret;
     }
+
+    double activePowerLoad()
+    {
+        double ret = 0;
+
+        for (it = buses.begin(); it != buses.end(); ++it)
+        {
+            ret += it->second->getActivePowerLoad();
+        }
+
+        return ret;
+    }
+
+    double activePowerGen()
+    {
+        double ret = 0;
+
+        for (it = buses.begin(); it != buses.end(); ++it)
+        {
+            ret += it->second->getActivePowerGen();
+        }
+
+        return ret;
+    }
+
+    int size()
+    {
+        return buses.size();
+    }
+
+    // @todo rename, refactor, operator []
+    Bus * get(int n)
+    {
+        it = buses.begin();
+        for (int i = 0; i < n; ++i, ++it);
+        return it->second;
+    }
 };
 
 class Line
 {
 private:
+    Bus * from;
+    Bus * to;
+    float R, X;
+    double G, B;
 public:
+    Line(Bus * fromBus, Bus * toBus, double r, double x)
+    {
+        from = fromBus;
+        to   = toBus;
+        R = r;
+        X = x;
+        G = R / (X * X + R * R);
+        B = X / (X * X + R * R);
+    }
+
+    double getR()
+    {
+        return R;
+    }
+
+    double getX()
+    {
+        return X;
+    }
+
+    double getG()
+    {
+        return G;
+    }
+
+    double getB()
+    {
+        return B;
+    }
+
+    Bus * getFrom()
+    {
+        return from;
+    }
+
+    Bus * getTo()
+    {
+        return to;
+    }
+};
+
+class LineCollection
+{
+private:
+    map <int, Line *> lines;
+    map <int, Line *>::iterator it;
+public:
+    LineCollection()
+    {
+
+    }
+
+    LineCollection * addLine(Line * line)
+    {
+        // @todo правильно составить ключ
+        int key = line->getFrom()->getNo() * 1000 + line->getTo()->getNo();
+        lines[key] = line;
+        return this;
+    }
+
+    Line * getLine(int from, int to)
+    {
+        int key = from * 1000 + to;
+        if (lines.count(key) < 1)
+        {
+            key = to * 1000 + from;
+        }
+        // @todo узкое место, нужна проверка на map::end()
+        return lines.find(key)->second;
+    }
+
+    int size()
+    {
+        return lines.size();
+    }
+
+    // @todo rename, refactor, operator []
+    Line * get(int n)
+    {
+        it = lines.begin();
+        for (int i = 0; i < n; ++i, ++it);
+        return it->second;
+    }
 };
 
 
-void fillData()
-{
-    TiXmlDocument busData("../data/set_default/bus_data.xml");
-    busData.LoadFile();
-    TiXmlNode * buses = busData.FirstChild("bus-data")->FirstChild("buses");
 
-    cout << buses->LastChild("bus")->FirstChild("no")->FirstChild()->Value();
-}
-
-int main()
-{
-
-    fillData();
-    return 0;
-}
+//int main()
+//{
+//
+//    fillBusData();
+//    fillLineData();
+//    return 0;
+//}
