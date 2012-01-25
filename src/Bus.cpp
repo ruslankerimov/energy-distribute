@@ -13,8 +13,9 @@ private:
     double activePowerLoad, reactivePowerLoad;
     double reactivePowerGen, minReactivePowerGen, maxReactivePowerGen;
     double activePowerGen, minActivePowerGen, maxActivePowerGen;
+    double G, B;
     vector <double *> costCoefficents;
-    map <int, Bus *> links;
+    vector <Bus*> links;
 
 public:
     Bus(int n, int c)
@@ -26,6 +27,7 @@ public:
         activePowerLoad = reactivePowerLoad = 0;
         reactivePowerGen = minReactivePowerGen = maxReactivePowerGen = 0;
         activePowerGen = minActivePowerGen = maxActivePowerGen = 0;
+        G = B = 0;
     }
 
     int getNo()
@@ -169,10 +171,27 @@ public:
         return this;
     }
 
-    Bus * addLinkedBus(Bus * bus)
+    Bus * addLinkedBus(Bus * bus, double g, double b)
     {
-        links[bus->getNo()] = bus;
+        links.push_back(bus);
+        G += g;
+        B += b;
         return this;
+    }
+
+    vector <Bus*> getLinkedBus()
+    {
+        return links;
+    }
+
+    double getG()
+    {
+        return G;
+    }
+
+    double getB()
+    {
+        return B;
     }
 
     bool isGeneratorBus()
@@ -311,6 +330,7 @@ class LineCollection
 {
 private:
     map <int, Line *> lines;
+    map <int, vector <Line*> > links;
     map <int, Line *>::iterator it;
 public:
     LineCollection()
@@ -323,6 +343,11 @@ public:
         // @todo правильно составить ключ
         int key = line->getFrom()->getNo() * 1000 + line->getTo()->getNo();
         lines[key] = line;
+        //@todo
+        links[line->getFrom()->getNo()].push_back(line);
+        links[line->getTo()->getNo()].push_back(line);
+        line->getFrom()->addLinkedBus(line->getTo(), line->getG(), line->getB());
+        line->getTo()->addLinkedBus(line->getFrom(), line->getG(), line->getB());
         return this;
     }
 
@@ -342,6 +367,10 @@ public:
         return lines.size();
     }
 
+    vector <Line*> getBusLines(int busNo)
+    {
+        return links[busNo];
+    }
     // @todo rename, refactor, operator []
     Line * get(int n)
     {

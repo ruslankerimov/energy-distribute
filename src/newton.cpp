@@ -32,10 +32,9 @@ double getEPS(vector <double> x);
 //}
 
 int newton(
-		vector <double> x0,
+		vector <double> &x0,
 		double (* getFCell)(int i, vector <double>),
-		double (* getYCell)(int i, int j, vector <double>),
-		vector <double> & ans
+		double (* getYCell)(int i, int j, vector <double>)
 ) {
 	bool check = true;
 	int ret = 0;
@@ -54,28 +53,28 @@ int newton(
 			check = false;
 		}
 
-//		cout << endl << "************" << endl << "Шаг №" << i;
-//		cout << endl << "Y:";
-//		for (int j = 0; j < n; ++j) {
-//			cout << endl;
-//			for (int k = 0; k < n; ++k) {
-//				cout << y[j][k] << " ";
-//			}
-//		}
-//		cout << endl << "F:";
-//		for (int j = 0; j < n; ++j) {
-//			cout << endl << f[j];
-//		}
-//		cout << endl << "Решение на шаге:" << ret << endl;
-//		for (int j = 0; j < n; ++j) {
-//			cout << "x" << j << " = " << x0[j] << "; ";
-//		}
-//		cout << endl << "Решение линейной системы: " << endl;
-//		for (int j = 0; j < n; ++j) {
-//			cout << "z" << j << " = " << z[j] << "; ";
-//		}
-//		cout << endl << "Погрешность: " << getEPS(z);
-//		cout << endl << "************" << endl;
+		cout << endl << "************" << endl << "Шаг №" << i;
+		cout << endl << "Y:";
+		for (int j = 0; j < n; ++j) {
+			cout << endl;
+			for (int k = 0; k < n; ++k) {
+				cout << y[j][k] << " ";
+			}
+		}
+		cout << endl << "F:";
+		for (int j = 0; j < n; ++j) {
+			cout << endl << f[j];
+		}
+		cout << endl << "Решение на шаге:" << ret << endl;
+		for (int j = 0; j < n; ++j) {
+			cout << "x" << j << " = " << x0[j] << "; ";
+		}
+		cout << endl << "Решение линейной системы: " << endl;
+		for (int j = 0; j < n; ++j) {
+			cout << "z" << j << " = " << z[j] << "; ";
+		}
+		cout << endl << "Погрешность: " << getEPS(z);
+		cout << endl << "************" << endl;
 
 		if (getEPS(z) < EPS1) {
 			check = false;
@@ -94,8 +93,6 @@ int newton(
 				}
 			}
 		}
-
-		ans = x0;
 	}
 
 	return ret;
