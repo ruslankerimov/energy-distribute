@@ -1,13 +1,14 @@
 #include <iostream>
 #include <vector>
 #include <ga/ga.h>
+
 #include "../lib/tinyxml/tinyxml.cpp"
 #include "../lib/tinyxml/tinystr.cpp"
 #include "../lib/tinyxml/tinyxmlerror.cpp"
 #include "../lib/tinyxml/tinyxmlparser.cpp"
 
 #include "newton.cpp"
-#include "Bus.cpp"
+#include "EnergyBus.cpp"
 
 #define INSTANTIATE_REAL_GENOME
 #include <ga/GARealGenome.h>
@@ -19,17 +20,20 @@ void parseLinesData();
 void parseGAparams();
 float objective(GAGenome &);
 void calculate(GARealGenome, bool);
+void fillFromGenome(GARealGenome);
 double getYCell(int, int, vector <double>);
 double getFCell(int, vector <double>);
 void calculation(GARealGenome);
 double getLosses();
 
-Bus * balanceBus;
-LineCollection lines;
-BusCollection allBus;
-BusCollection genBus;
-BusCollection notGenBus;
-BusCollection genWithoutBalanceBus;
+const long double PI = 2 * asin(1);
+
+EnergyBus * balanceBus;
+EnergyLineSet lines;
+EnergyBusSet allBus;
+EnergyBusSet genBus;
+EnergyBusSet notGenBus;
+EnergyBusSet genWithoutBalanceBus;
 GAParameterList params;
 
 int main(int argc, char** argv)
@@ -39,40 +43,41 @@ int main(int argc, char** argv)
     parseGAparams();
     params.parse(argc, argv, gaFalse);
 
+    vector <EnergyLine*> busLines = lines.getBusLines(6);
+    for (vector <EnergyLine*>::iterator it = busLines.begin(); it != busLines.end(); ++it)
+    {
+        EnergyLine* line = *it;
+        cout << endl << line->getFrom()->getNo() << "->" << line->getTo()->getNo();
+    }
+
     cout << endl << "*** Исходные данные ***";
     cout << endl << "Генераторные узлы: ";
     for (int i = 0; i < genBus.size(); ++i) {
-        cout << genBus.get(i)->getNo() << " ";
+        cout << genBus[i]->getNo() << " ";
     }
     cout << endl << "Нагрузочные узлы: ";
     for (int i = 0; i < notGenBus.size(); ++i) {
-        cout << notGenBus.get(i)->getNo() << " ";
+        cout << notGenBus[i]->getNo() << " ";
     }
     cout << endl << "Балансирующий узел: " << balanceBus->getNo();
     cout << endl << "Линии и из характеристики: ";
     for (int i = 0; i < lines.size(); ++i) {
-        Line * line = lines.get(i);
+        EnergyLine * line = lines[i];
         cout << endl << "из " << line->getFrom()->getNo() << " в " << line->getTo()->getNo()
                 << "; G=" << line->getG() << ", B=" << line->getB();
     }
     cout << endl << "Характеристики узлов: ";
     for (int i = 0; i < allBus.size(); ++i) {
-        Bus * bus = allBus.get(i);
+        EnergyBus * bus = allBus[i];
         cout << endl << "Узел №" << bus->getNo()
-                << ": Gkk=" << bus->getG() << "; Bkk=" << bus->getB()
+                << ": G=" << bus->getG() << "; B=" << bus->getB() << "; V=" << bus->getVoltage()
                 << "; Pload=" << bus->getActivePowerLoad() << "; Qload=" << bus->getReactivePowerLoad();
     }
-
-
-
-//    n = nodes.size();
-//    k = genNodes.size();
-//
 
     GARealAlleleSetArray alleles;
     cout << endl << "Лимиты генераторных узлов: ";
     for (int i = 0; i < genBus.size(); ++i) {
-        Bus * bus = genBus.get(i);
+        EnergyBus * bus = genBus[i];
         if (bus->isBalancedBus())
         {
             continue;
@@ -95,39 +100,78 @@ int main(int argc, char** argv)
     ga.evolve();
 
     cout << endl << "*** Результаты ***";
-    cout << endl << "Нужная активная мощность: " << allBus.activePowerLoad() << " МВт";
+    cout << endl << "Нужная активная мощность: " << allBus.getActivePowerLoad() << " МВт";
 
     genome = ga.statistics().bestIndividual();
+    fillFromGenome(genome);
     calculate(genome, true);
     cout << endl << "Получившиеся мощности: ";
     for (int i = 0; i < genBus.size(); ++i) {
-        Bus * bus = genBus.get(i);
+        EnergyBus * bus = genBus[i];
         cout << endl << "узел №" << bus->getNo() << " " << bus->getActivePowerGen() << " МВт";
     }
 
-    cout << endl << "Получившаяся суммарная мощность: " << allBus.activePowerGen() << " МВт";
+    cout << endl << "Получившаяся суммарная мощность: " << allBus.getActivePowerGen() << " МВт";
     cout << endl << "Получившаяся стоимость: " << allBus.cost();
 
-    cout << endl << endl;
+    for (int i = 0; i < allBus.size(); ++i) {
+        EnergyBus * bus = allBus[i];
+        bool check = bus->checkRestractions();
+        cout << endl << "узел №" << bus->getNo() << " " << check;
+        if ( ! check)
+        {
+            double* limits = bus->getPowerGenLimits();
+            cout << endl << bus->getVoltage() << " " << bus->getAngle() << " " << limits[2] << " "<< limits[3]
+              << (bus->getReactivePowerGen() >= limits[2]) << " "<< (bus->getReactivePowerGen() <= limits[3]);
+        }
+
+    }
+
+    cout << endl << "Ограничения: " << allBus.checkRestractions();
+    cout << endl;
 
     return 0;
 }
 
 float objective(GAGenome & g) {
+    float ret = 0.0;
     GARealGenome& genome = (GARealGenome&) g;
+
+    fillFromGenome(genome);
+    double power = allBus.getActivePowerLoad() - genWithoutBalanceBus.getActivePowerGen();
+    double* limits = balanceBus->getPowerGenLimits();
+
+    //    Первая прикидка
+    if (power > limits[1])
+    {
+        cout << endl << "here1" << " " << power << " " << limits[1];
+        return limits[1] - power;
+    }
+
+    calculate(genome, true);
     double cost = allBus.cost();
-    calculate(genome, false);
-    return 1 / allBus.cost();
+
+    if (allBus.checkRestractions())
+    {
+        cost += 100;
+    }
+
+    ret = 1 / cost;
+
+    return ret;
+}
+
+void fillFromGenome(GARealGenome genome)
+{
+    for (int i = 0, size = genWithoutBalanceBus.size(); i < size; ++i)
+    {
+        EnergyBus* bus = genWithoutBalanceBus[i];
+        bus->setActivePowerGen(genome.gene(i));
+    }
 }
 
 void calculate(GARealGenome genome, bool flag)
 {
-    for (int i = 0, size = genWithoutBalanceBus.size(); i < size; ++i)
-    {
-        Bus* bus = genWithoutBalanceBus.get(i);
-        bus->setActivePowerGen(genome.gene(i));
-    }
-
     vector <double> x;
     int n = allBus.size();
     // начальные значения
@@ -135,24 +179,28 @@ void calculate(GARealGenome genome, bool flag)
         x.push_back(i < n ? 0 : 1);
     }
 
-
-    int solve = flag ? newton(x, getFCell, getYCell) : 1;
+    int solve = 0;
     if (flag)
     {
-        cout << endl << "Решение: " << solve;
+        solve = newton(x, getFCell, getYCell);
+//        getYCell(5, 5, x);
+//        cout << endl << "Решение: " << solve;
     }
 
+    double losses = 0.0;
     if (solve)
     {
         for (int i = 0; i < n; ++i) {
-            Bus* bus = allBus.get(i);
+            EnergyBus* bus = allBus[i];
 
             bus->setAngle(x[i])->setVoltage(x[n + i]);
         }
+
+        losses = getLosses();
     }
 
-    double losses = getLosses();
-    double power = allBus.activePowerLoad() + losses - genWithoutBalanceBus.activePowerGen();
+
+    double power = allBus.getActivePowerLoad() + losses - genWithoutBalanceBus.getActivePowerGen();
     power < 0 && (power = 0);
     balanceBus->setActivePowerGen(power);
 //
@@ -167,14 +215,12 @@ double getYCell(int i, int j, vector <double> x) {
     int n = allBus.size();
     int k = i % n;
     int m = j % n;
-    Bus* kBus = allBus.get(k);
-    Bus* mBus = allBus.get(m);
-    Line* kmLine = lines.getLine(kBus->getNo(), mBus->getNo());
+    EnergyBus* kBus = allBus[k];
+    EnergyBus* mBus = allBus[m];
+    EnergyLine* kmLine = lines.getLine(kBus->getNo(), mBus->getNo());
 
     bool isForP = i < n;
     bool isDelta = j < n;
-    bool isGen = kBus->isGeneratorBus();
-
     double Vk = x[k + n];
     double Vm = x[m + n];
     double Dk = x[k];
@@ -188,7 +234,7 @@ double getYCell(int i, int j, vector <double> x) {
 //          << ", kNodeNumber=" << kBus->getNo()
 //          << ", mNodeNumber=" << mBus->getNo()
 //          << endl
-//          << ", isGen=" << isGen
+//          << ", isGen=" << kBus->isGeneratorBus()
 //          << ", isForP=" << isForP
 //          << ", isDelta=" << isDelta
 //          << ", Vk=" << Vk
@@ -200,7 +246,8 @@ double getYCell(int i, int j, vector <double> x) {
 //          << ", Gkk=" << Gkk << ", Bkk=" << Bkk
 //          << endl;
 
-    if (kBus->isBalancedBus()) {
+    if (kBus->isBalancedBus())
+    {
         if (i == j) {
             ret = 1;
         } else {
@@ -208,7 +255,9 @@ double getYCell(int i, int j, vector <double> x) {
         }
 
         return ret;
-    } else if (isGen && ! isForP) {
+    }
+    else if (kBus->isGeneratorBus() && ! isForP)
+    {
         if (i == j) {
             ret = 1;
         } else {
@@ -218,106 +267,87 @@ double getYCell(int i, int j, vector <double> x) {
         return ret;
     }
 
-    if (isForP) {
-        if (isDelta) {
-            if (kBus == mBus) {
-                vector <Line*> busLines = lines.getBusLines(kBus->getNo());
-                for (vector <Line*>::iterator it = busLines.begin(); it != busLines.end(); ++it) {
-                    Line * line = *it;
-                    Bus * from = line->getFrom();
-                    Bus * to = line->getTo();
-                    double Bkm = line->getB();
-                    double Gkm = line->getG();
-                    double Dm, Vm;
+    if (kBus == mBus)
+    {
+        if ( ! isDelta)
+        {
+            if (isForP)
+            {
+                ret -= 2 * Vk * Gkk;
+            }
+            else
+            {
+                ret += 2 * Vk * Bkk;
+            }
+        }
 
-                    if (to == kBus)
-                    {
-                        to = from;
-                    }
-                    Dm = x[to->getNo() - 1]; // @todo;
-                    Vm = x[n + to->getNo() -1];
+        vector <EnergyLine*> busLines = lines.getBusLines(kBus->getNo());
 
-                    ret += Vm * (Gkm * sin(Dk - Dm) - Bkm * cos(Dk - Dm));
+        for (vector <EnergyLine*>::iterator it = busLines.begin(); it != busLines.end(); ++it)
+        {
+            EnergyLine* line = *it;
+            EnergyBus* from = line->getFrom();
+            EnergyBus* to = line->getTo();
+            double Bkm = line->getB();
+            double Gkm = line->getG();
+            double Dm, Vm;
+
+            if (to == kBus)
+            {
+                to = from;
+            }
+
+            Dm = x[to->getNo() - 1]; // @todo;
+            Vm = x[n + to->getNo() -1];
+
+            if (isForP)
+            {
+                if (isDelta)
+                {
+                    ret += Vk * Vm * (Gkm * sin(Dk - Dm) - Bkm * cos(Dk - Dm));
                 }
-                ret *= Vk;
-            } else {
+                else
+                {
+                    ret -= Vm * (Gkm * cos(Dk - Dm) + Bkm * sin(Dk - Dm));
+                }
+            }
+            else
+            {
+                if (isDelta)
+                {
+                    ret -= Vk * Vm * (Bkm * sin(Dk - Dm) + Gkm * cos(Dk - Dm));
+                }
+                else
+                {
+                    ret += Vm * (Bkm * cos(Dk - Dm) - Gkm * sin(Dk - Dm));
+                }
+            }
+        }
+    }
+    else
+    {
+        if (isForP)
+        {
+            if (isDelta)
+            {
                 ret = Vk * Vm
                         * (-Gkm * sin(Dk - Dm) + Bkm * cos(Dk - Dm));
             }
-        } else {
-            if (kBus == mBus) {
-                ret -= 2 * Vk * Gkk;
-                vector <Line*> busLines = lines.getBusLines(kBus->getNo());
-                for (vector <Line*>::iterator it = busLines.begin(); it != busLines.end(); ++it) {
-                    Line * line = *it;
-                    Bus * from = line->getFrom();
-                    Bus * to = line->getTo();
-                    double Bkm = line->getB();
-                    double Gkm = line->getG();
-                    double Dm, Vm;
-
-                    if (to == kBus)
-                    {
-                        to = from;
-                    }
-                    Dm = x[to->getNo() - 1]; // @todo;
-                    Vm = x[n + to->getNo() -1];
-
-                    ret -= Vm * (Gkm * cos(Dk - Dm) + Bkm * sin(Dk - Dm));
-                }
-            } else {
+            else
+            {
                 ret = -Vk
                         * (Gkm * cos(Dk - Dm) + Bkm * sin(Dk - Dm));
             }
         }
-    } else {
-        if (isDelta) {
-            if (kBus == mBus) {
-                vector <Line*> busLines = lines.getBusLines(kBus->getNo());
-                for (vector <Line*>::iterator it = busLines.begin(); it != busLines.end(); ++it) {
-                    Line * line = *it;
-                    Bus * from = line->getFrom();
-                    Bus * to = line->getTo();
-                    double Bkm = line->getB();
-                    double Gkm = line->getG();
-                    double Dm, Vm;
-
-                    if (to == kBus)
-                    {
-                        to = from;
-                    }
-                    Dm = x[to->getNo() - 1]; // @todo;
-                    Vm = x[n + to->getNo() -1];
-
-                    ret -= Vm * (Bkm * sin(Dk - Dm) + Gkm * cos(Dk - Dm));
-                }
-                ret *= Vk;
-            } else {
+        else
+        {
+            if (isDelta)
+            {
                 ret = Vk * Vm
                         * (Bkm * sin(Dk - Dm) + Gkm * cos(Dk - Dm));
             }
-        } else {
-            if (kBus == mBus) {
-                ret += 2 * Vk * Bkk;
-                vector <Line*> busLines = lines.getBusLines(kBus->getNo());
-                for (vector <Line*>::iterator it = busLines.begin(); it != busLines.end(); ++it) {
-                    Line * line = *it;
-                    Bus * from = line->getFrom();
-                    Bus * to = line->getTo();
-                    double Bkm = line->getB();
-                    double Gkm = line->getG();
-                    double Dm, Vm;
-
-                    if (to == kBus)
-                    {
-                        to = from;
-                    }
-                    Dm = x[to->getNo() - 1]; // @todo;
-                    Vm = x[n + to->getNo() -1];
-
-                    ret += Vm * (Bkm * cos(Dk - Dm) - Gkm * sin(Dk - Dm));
-                }
-            } else {
+            else
+            {
                 ret = Vk
                         * (Bkm * cos(Dk - Dm) - Gkm * sin(Dk - Dm));
             }
@@ -329,26 +359,42 @@ double getYCell(int i, int j, vector <double> x) {
 
 double getFCell(int i, vector <double> x) {
     double ret = 0;
+
     int n = allBus.size();
-    int j = i % n;
-    Bus* bus = allBus.get(j);
+    int k = i % n;
+    EnergyBus* kBus = allBus[k];
     bool isForP = i < n;
 
-    double Vk = x[j + n];
-    double Pk = (-bus->getActivePowerLoad() + bus->getActivePowerGen()) / 100;
-    double Qk = bus->getReactivePowerLoad() / 100;
-    double Gkk = bus->getG();
-    double Bkk = bus->getB();
-    double Dk = x[j];
+    double Vk = x[k + n];
+    double Pk = (-kBus->getActivePowerLoad()) / 100;
+    double Qk = kBus->getReactivePowerLoad() / 100;
+    double Gkk = kBus->getG();
+    double Bkk = kBus->getB();
+    double Dk = x[k];
 
-    if (bus->isBalancedBus()) {
+    if (kBus->isGeneratorBus())
+    {
+        Pk += kBus->getActivePowerGen() / 100;
+    }
+
+//  cout << endl << "DEBUG: j=" << j
+//          << ", kNodeNumber=" << bus->getNo()
+//          << endl
+//          << ", isForP=" << isForP
+//          << ", Vk=" << Vk
+//          << endl
+//          << ", Dk=" << Dk
+//          << ", Gkk=" << Gkk << ", Bkk=" << Bkk
+//          << endl;
+
+    if (kBus->isBalancedBus()) {
         if (isForP) {
             ret = Dk;
         } else {
-            ret = Vk - bus->getVoltage();
+            ret = Vk - kBus->getVoltage();
         }
-    } else if (bus->isGeneratorBus() && ! isForP) {
-        ret = Vk - bus->getVoltage();
+    } else if (kBus->isGeneratorBus() && ! isForP) {
+        ret = Vk - kBus->getVoltage();
     } else {
         if (isForP) {
             ret += Pk - Vk * Vk * Gkk;
@@ -356,16 +402,16 @@ double getFCell(int i, vector <double> x) {
             ret += Qk + Vk * Vk * Bkk;
         }
 
-        vector <Line*> busLines = lines.getBusLines(bus->getNo());
-        for (vector <Line*>::iterator it = busLines.begin(); it != busLines.end(); ++it) {
-            Line * line = *it;
-            Bus * from = line->getFrom();
-            Bus * to = line->getTo();
+        vector <EnergyLine*> busLines = lines.getBusLines(kBus->getNo());
+        for (vector <EnergyLine*>::iterator it = busLines.begin(); it != busLines.end(); ++it) {
+            EnergyLine * line = *it;
+            EnergyBus * from = line->getFrom();
+            EnergyBus * to = line->getTo();
             double Bkm = line->getB();
             double Gkm = line->getG();
             double Dm, Vm;
 
-            if (to == bus)
+            if (to == kBus)
             {
                 to = from;
             }
@@ -383,17 +429,14 @@ double getFCell(int i, vector <double> x) {
     return ret;
 }
 
-
-
-
 double getLosses()
 {
     double ret = 0;
 
     for (int i = 0, size = lines.size(); i < size; ++i)
     {
-        Line* line = lines.get(i);
-        double Vk = line->getFrom()->getAngle();
+        EnergyLine* line = lines[i];
+        double Vk = line->getFrom()->getVoltage();
         double Vm = line->getTo()->getVoltage();
         double Dk = line->getFrom()->getAngle();
         double Dm = line->getTo()->getAngle();
@@ -402,12 +445,12 @@ double getLosses()
         ret += Gkm * (Vk * Vk + Vm * Vm - 2 * Vk * Vm * cos(Dk - Dm));
     }
 
-    return 0;
+    return 100 * ret;
 }
 
 void parseBusData()
 {
-    TiXmlDocument busDataFile("input/set_default/bus_data.xml");
+    TiXmlDocument busDataFile("input/set_2/bus_data.xml");
     busDataFile.LoadFile();
     TiXmlElement * busElements = busDataFile.FirstChildElement("bus-data")->FirstChildElement("buses");
     TiXmlElement * busElement = busElements->FirstChildElement("bus");
@@ -417,7 +460,7 @@ void parseBusData()
         int no = atoi(busElement->FirstChildElement("no")->GetText());
         int code = atoi(busElement->FirstChildElement("code")->GetText());
 
-        Bus * bus = new Bus(no, code);
+        EnergyBus * bus = new EnergyBus(no, code);
 
         bus->setVoltage(
             atof(busElement->FirstChildElement("voltage")->FirstChildElement("value")->GetText()),
@@ -425,8 +468,8 @@ void parseBusData()
             atof(busElement->FirstChildElement("voltage")->FirstChildElement("max-value")->GetText())
         )->setAngle(
             atof(busElement->FirstChildElement("angle")->FirstChildElement("value")->GetText()),
-            atof(busElement->FirstChildElement("angle")->FirstChildElement("min-value")->GetText()),
-            atof(busElement->FirstChildElement("angle")->FirstChildElement("max-value")->GetText())
+            atof(busElement->FirstChildElement("angle")->FirstChildElement("min-value")->GetText()) * PI/180,
+            atof(busElement->FirstChildElement("angle")->FirstChildElement("max-value")->GetText()) * PI/180
         )->setActivePowerLoad(
             atof(busElement->FirstChildElement("power-load")->FirstChildElement("active")->FirstChildElement("value")->GetText())
         )->setReactivePowerLoad(
@@ -481,7 +524,7 @@ void parseBusData()
 
 void parseLinesData()
 {
-    TiXmlDocument lineDataFile("input/set_default/lines_data.xml");
+    TiXmlDocument lineDataFile("input/set_2/lines_data.xml");
     lineDataFile.LoadFile();
     TiXmlElement * linesElement = lineDataFile.FirstChildElement("lines-data")
                                                 ->FirstChildElement("lines");
@@ -492,13 +535,13 @@ void parseLinesData()
         int from = atoi(lineElement->FirstChildElement("bus-from")->GetText());
         int to   = atoi(lineElement->FirstChildElement("bus-to")->GetText());
 
-        Bus * busFrom = allBus.getBus(from);
-        Bus * busTo = allBus.getBus(to);
+        EnergyBus * busFrom = allBus.getBus(from);
+        EnergyBus * busTo = allBus.getBus(to);
 
         double R = atof(lineElement->FirstChildElement("resistance")->FirstChildElement("active")->GetText());
         double X = atof(lineElement->FirstChildElement("resistance")->FirstChildElement("reactive")->GetText());
 
-        Line * line = new Line(busFrom, busTo, R, X);
+        EnergyLine * line = new EnergyLine(busFrom, busTo, R, X);
         lines.addLine(line);
     }
     while (lineElement = lineElement->NextSiblingElement("line"));
@@ -508,7 +551,7 @@ void parseLinesData()
 void parseGAparams()
 {
     GASteadyStateGA::registerDefaultParameters(params);
-    TiXmlDocument gaParamsFile("input/set_default/ga_params.xml");
+    TiXmlDocument gaParamsFile("input/set_2/ga_params.xml");
     gaParamsFile.LoadFile();
     TiXmlElement * gaParamsElement = gaParamsFile.FirstChildElement("ga-params");
 
