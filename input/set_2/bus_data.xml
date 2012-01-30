@@ -37,34 +37,12 @@
             <cost>
                 <part>
                     <power>
-                        <min-value>50</min-value>
-                        <max-value>100</max-value>
-                    </power>
-                    <coefs>
-                        <A>0.0036</A>
-                        <B>1.9</B>
-                        <C>0</C>
-                    </coefs>
-                </part>
-                <part>
-                    <power>
-                        <min-value>100</min-value>
-                        <max-value>150</max-value>
-                    </power>
-                    <coefs>
-                        <A>0.0037</A>
-                        <B>1.95</B>
-                        <C>0</C>
-                    </coefs>
-                </part>
-                <part>
-                    <power>
-                        <min-value>150</min-value>
-                        <max-value>200</max-value>
+                        <min-value>0</min-value>
+                        <max-value>1000</max-value>
                     </power>
                     <coefs>
                         <A>0.00375</A>
-                        <B>2.0</B>
+                        <B>2</B>
                         <C>0</C>
                     </coefs>
                 </part>
@@ -107,34 +85,12 @@
             <cost>
                 <part>
                     <power>
-                        <min-value>20</min-value>
-                        <max-value>40</max-value>
+                        <min-value>0</min-value>
+                        <max-value>1000</max-value>
                     </power>
                     <coefs>
-                        <A>0.017</A>
-                        <B>1.7</B>
-                        <C>0</C>
-                    </coefs>
-                </part>
-                <part>
-                    <power>
-                        <min-value>40</min-value>
-                        <max-value>60</max-value>
-                    </power>
-                    <coefs>
-                        <A>0.0174</A>
-                        <B>1.72</B>
-                        <C>0</C>
-                    </coefs>
-                </part>
-                <part>
-                    <power>
-                        <min-value>60</min-value>
-                        <max-value>80</max-value>
-                    </power>
-                    <coefs>
-                        <A>0.0235</A>
-                        <B>2.05</B>
+                        <A>0.01750</A>
+                        <B>1.75</B>
                         <C>0</C>
                     </coefs>
                 </part>
@@ -223,34 +179,12 @@
             <cost>
                 <part>
                     <power>
-                        <min-value>15</min-value>
-                        <max-value>30</max-value>
+                        <min-value>0</min-value>
+                        <max-value>1000</max-value>
                     </power>
                     <coefs>
-                        <A>0.045</A>
-                        <B>0.75</B>
-                        <C>0</C>
-                    </coefs>
-                </part>
-                <part>
-                    <power>
-                        <min-value>30</min-value>
-                        <max-value>40</max-value>
-                    </power>
-                    <coefs>
-                        <A>0.06</A>
-                        <B>0.9</B>
-                        <C>0</C>
-                    </coefs>
-                </part>
-                <part>
-                    <power>
-                        <min-value>40</min-value>
-                        <max-value>50</max-value>
-                    </power>
-                    <coefs>
-                        <A>0.0825</A>
-                        <B>1.2</B>
+                        <A>0.0625</A>
+                        <B>1</B>
                         <C>0</C>
                     </coefs>
                 </part>
@@ -339,34 +273,12 @@
             <cost>
                 <part>
                     <power>
-                        <min-value>10</min-value>
-                        <max-value>20</max-value>
+                        <min-value>0</min-value>
+                        <max-value>1000</max-value>
                     </power>
                     <coefs>
-                        <A>0.0055</A>
-                        <B>3</B>
-                        <C>0</C>
-                    </coefs>
-                </part>
-                <part>
-                    <power>
-                        <min-value>20</min-value>
-                        <max-value>30</max-value>
-                    </power>
-                    <coefs>
-                        <A>0.0075</A>
-                        <B>3.2</B>
-                        <C>0</C>
-                    </coefs>
-                </part>
-                <part>
-                    <power>
-                        <min-value>30</min-value>
-                        <max-value>35</max-value>
-                    </power>
-                    <coefs>
-                        <A>0.0123</A>
-                        <B>3.65</B>
+                        <A>0.00834</A>
+                        <B>3.25</B>
                         <C>0</C>
                     </coefs>
                 </part>
@@ -455,34 +367,12 @@
             <cost>
                 <part>
                     <power>
-                        <min-value>10</min-value>
-                        <max-value>20</max-value>
+                        <min-value>0</min-value>
+                        <max-value>1000</max-value>
                     </power>
                     <coefs>
-                        <A>0.015</A>
-                        <B>2.75</B>
-                        <C>0</C>
-                    </coefs>
-                </part>
-                <part>
-                    <power>
-                        <min-value>20</min-value>
-                        <max-value>25</max-value>
-                    </power>
-                    <coefs>
-                        <A>0.02</A>
-                        <B>2.9</B>
-                        <C>0</C>
-                    </coefs>
-                </part>
-                <part>
-                    <power>
-                        <min-value>25</min-value>
-                        <max-value>30</max-value>
-                    </power>
-                    <coefs>
-                        <A>0.035</A>
-                        <B>3.3</B>
+                        <A>0.025</A>
+                        <B>3</B>
                         <C>0</C>
                     </coefs>
                 </part>
@@ -548,34 +438,12 @@
             <cost>
                 <part>
                     <power>
-                        <min-value>12</min-value>
-                        <max-value>20</max-value>
+                        <min-value>0</min-value>
+                        <max-value>1000</max-value>
                     </power>
                     <coefs>
-                        <A>0.015</A>
-                        <B>2.75</B>
-                        <C>0</C>
-                    </coefs>
-                </part>
-                <part>
-                    <power>
-                        <min-value>20</min-value>
-                        <max-value>30</max-value>
-                    </power>
-                    <coefs>
-                        <A>0.02</A>
-                        <B>2.90</B>
-                        <C>0</C>
-                    </coefs>
-                </part>
-                <part>
-                    <power>
-                        <min-value>30</min-value>
-                        <max-value>40</max-value>
-                    </power>
-                    <coefs>
-                        <A>0.035</A>
-                        <B>3.3</B>
+                        <A>0.025</A>
+                        <B>3</B>
                         <C>0</C>
                     </coefs>
                 </part>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<lines-data>
+    <lines>
+        <line>
+            <bus-from>1</bus-from>
+            <bus-to>2</bus-to>
+            <resistance>
+                <active>0.0192</active>
+                <reactive>0.0575</reactive>
+            </resistance>
+            <halfB>0.02640</halfB>
+            <tap-in-bus>1</tap-in-bus>
+        </line>
+        <line>
+            <bus-from>1</bus-from>
+            <bus-to>3</bus-to>
+            <resistance>
+                <active>0.0452</active>
+                <reactive>0.1852</reactive>
+            </resistance>
+            <halfB>0.02040</halfB>
+            <tap-in-bus>1</tap-in-bus>
+        </line>
+        <line>
+            <bus-from>2</bus-from>
+            <bus-to>3</bus-to>
+            <resistance>
+                <active>0.0570</active>
+                <reactive>0.1737</reactive>
+            </resistance>
+            <halfB>0.01840</halfB>
+            <tap-in-bus>1</tap-in-bus>
+        </line>
+    </lines>
+</lines-data>

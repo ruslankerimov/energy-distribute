@@ -10,10 +10,10 @@ template<typename T> T abs(T x) { return x < 0 ? -x : x; }
 const int INF = 1000000000;
 const double EPS = 1e-9;
 const double EPS1 = 1e-3;
-const int NMAX = 200;
+const int NMAX = 100;
 
 int gauss(vector < vector<double> > a, vector<double> b, vector <double> & ans);
-int newton(vector <double> x, double (* getFCell)(int i, vector <double>), double (* getYCell)(int i, int j, vector <double>), vector <double> & ans);
+int newton(vector <double> &x, double (* getFCell)(int i, vector <double>), double (* getYCell)(int i, int j, vector <double>));
 vector < vector <double> > getY(vector <double> x, double (* getYCell)(int i, int j, vector <double>));
 double getYCell(int i, int j, vector <double> x);
 vector <double> getF(vector <double> x, double (* getFCell)(int i, vector <double>));
@@ -53,28 +53,28 @@ int newton(
 			check = false;
 		}
 
-		cout << endl << "************" << endl << "Шаг №" << i;
-		cout << endl << "Y:";
-		for (int j = 0; j < n; ++j) {
-			cout << endl;
-			for (int k = 0; k < n; ++k) {
-				cout << y[j][k] << " ";
-			}
-		}
-		cout << endl << "F:";
-		for (int j = 0; j < n; ++j) {
-			cout << endl << f[j];
-		}
-		cout << endl << "Решение на шаге:" << ret << endl;
-		for (int j = 0; j < n; ++j) {
-			cout << "x" << j << " = " << x0[j] << "; ";
-		}
-		cout << endl << "Решение линейной системы: " << endl;
-		for (int j = 0; j < n; ++j) {
-			cout << "z" << j << " = " << z[j] << "; ";
-		}
-		cout << endl << "Погрешность: " << getEPS(z);
-		cout << endl << "************" << endl;
+//		cout << endl << "************" << endl << "Шаг №" << i;
+//		cout << endl << "Y:";
+//		for (int j = 0; j < n; ++j) {
+//			cout << endl << j << ": ";
+//			for (int k = 0; k < n; ++k) {
+//				cout << y[j][k] << " ";
+//			}
+//		}
+//		cout << endl << "F:";
+//		for (int j = 0; j < n; ++j) {
+//			cout << endl << j << ": " << f[j];
+//		}
+//		cout << endl << "Решение:" << ret << endl;
+//		for (int j = 0; j < n; ++j) {
+//			cout << "x" << j << " = " << x0[j] << "; ";
+//		}
+//		cout << endl << "Решение линейной системы: " << endl;
+//		for (int j = 0; j < n; ++j) {
+//			cout << "z" << j << " = " << z[j] << "; ";
+//		}
+//		cout << endl << "Погрешность: " << getEPS(z);
+//		cout << endl << "************" << endl;
 
 		if (getEPS(z) < EPS1) {
 			check = false;

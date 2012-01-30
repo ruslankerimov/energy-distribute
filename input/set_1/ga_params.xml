@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ga-params>
     <number-of-generation>3000</number-of-generation>
-    <population-size>20</population-size>
+    <population-size>3</population-size>
     <mutation-probability>0.3</mutation-probability>
     <crossover-probability>0.8</crossover-probability>
     <score-filename>output/bog.dat</score-filename>

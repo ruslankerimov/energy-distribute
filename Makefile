@@ -64,7 +64,8 @@ CXXFLAGS := $(CXXFLAGS) $(DEFS)
 #****************************************************************************
 
 SRC_DIR  := src/
-SRCS     := $(SRC_DIR)energy.cpp
+SRCS     := $(SRC_DIR)energy.cpp $(SRC_DIR)Newton.cpp $(SRC_DIR)Gauss.cpp $(SRC_DIR)EnergyBus.cpp $(SRC_DIR)EnergyLine.cpp
+           
 OBJS     := $(patsubst %.cpp, %.o, $(SRCS))
 
 #****************************************************************************
@@ -86,7 +87,7 @@ EXTRA_LIBS := -lga
 # Output
 #****************************************************************************
 
-$(OUTPUT): $(OBJS) GAlib tinyxml
+$(OUTPUT): $(OBJS) GAlib tinyxml $(SRC_DIR)Energy.cpp
 	$(LD) -o $@ $(LDFLAGS) $(OBJS) $(LIBS) $(EXTRA_LIBS)
 
 #****************************************************************************
