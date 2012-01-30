@@ -4,6 +4,7 @@
 #include <vector>
 #include <ga/ga.h>
 #include <math.h>
+#include <ctime>
 
 //#include "tinyxml/tinyxml.h"
 #include "../lib/tinyxml/tinyxml.cpp"
@@ -23,8 +24,15 @@ using namespace std;
 class Energy
 {
 private:
+    Energy();
+    Energy(Energy &);
     static Energy * instance;
 
+    float objective(GAGenome &);
+    double getYCell(int, int, vector <double>);
+    double getFCell(int, vector <double>);
+
+    void clearData();
     void parseData();
     void parseBusData();
     void parseLinesData();
@@ -41,19 +49,19 @@ private:
     EnergyBusSet notGenBus;
     EnergyBusSet genWithoutBalanceBus;
     GAParameterList params;
+
+    clock_t t1, t2;
 public:
-    Energy();
     static Energy * getInstance();
-    float objective(GAGenome &);
-    double getYCell(int, int, vector <double>);
-    double getFCell(int, vector <double>);
+
+    static float wrap_objective(GAGenome &);
+    static double wrap_getYCell(int, int, vector <double>);
+    static double wrap_getFCell(int, vector <double>);
+
+    void setup();
     void print();
     void report();
     void solve();
 };
-
-float wrap_objective(GAGenome &);
-double wrap_getYCell(int, int, vector <double>);
-double wrap_getFCell(int, vector <double>);
 
 #endif

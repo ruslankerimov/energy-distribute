@@ -5,25 +5,41 @@ using namespace std;
 
 const long double PI = 2 * asin(1);
 
+Energy * Energy::instance = 0;
+
 Energy::Energy()
 {
-    cout << "here";
-    Energy::instance = this;
-//    inputDir = dir1;
-//    outputDir = dir2;
+
 }
 
-Energy * Energy::instance = new Energy();
+Energy::Energy(Energy& clone)
+{
+
+}
 
 Energy * Energy::getInstance()
 {
-    return Energy::instance;
+    if ( ! instance)
+    {
+        instance = new Energy();
+    }
+
+    return instance;
+}
+
+void Energy::clearData()
+{
+
+}
+
+void Energy::setup()
+{
+    clearData();
+    parseData();
 }
 
 void Energy::solve()
 {
-    parseData();
-
     GARealAlleleSetArray alleles;
     for (int i = 0, size = genBus.size(); i < size; ++i)
     {
@@ -36,7 +52,7 @@ void Energy::solve()
         alleles.add(powerLimits[0], powerLimits[1], GAAllele::INCLUSIVE, GAAllele::INCLUSIVE);
     }
 
-    GARealGenome genome(alleles, wrap_objective);
+    GARealGenome genome(alleles, Energy::wrap_objective);
     genome.crossover(GARealGenome::OnePointCrossover);
     GASteadyStateGA ga(genome);
     ga.parameters(params);
@@ -45,7 +61,10 @@ void Energy::solve()
     ga.scaling(scaling);
     GATournamentSelector selector;
     ga.selector(selector);
+
+    t1 = clock();
     ga.evolve();
+    t2 = clock();
 
     genome = ga.statistics().bestIndividual();
     fillFromGenome(genome);
@@ -93,7 +112,7 @@ void Energy::calculate(GARealGenome genome, bool flag)
     }
 
     int solve = 0;
-    Newton newton(wrap_getFCell, wrap_getYCell, 10e-3, 100, false);
+    Newton newton(Energy::wrap_getFCell, Energy::wrap_getYCell, 10e-3, 100, false);
 
     if (flag)
     {
@@ -466,6 +485,7 @@ void Energy::print()
         }
     }
 
+    cout << endl << "Время расчёта: " << (double)(t2 - t1) / CLOCKS_PER_SEC << " c";
     cout << endl;
 }
 
@@ -596,17 +616,17 @@ void Energy::parseGAparams()
     params.set(gaNscoreFilename,  gaParamsElement->FirstChildElement("score-filename")->GetText());
 }
 
-float wrap_objective(GAGenome & g)
+float Energy::wrap_objective(GAGenome & g)
 {
     return Energy::getInstance()->objective(g);
 }
 
-double wrap_getYCell(int i, int j, vector <double> x)
+double Energy::wrap_getYCell(int i, int j, vector <double> x)
 {
     return Energy::getInstance()->getYCell(i, j, x);
 }
 
-double wrap_getFCell(int i, vector <double> x)
+double Energy::wrap_getFCell(int i, vector <double> x)
 {
     return Energy::getInstance()->getFCell(i, x);
 }
