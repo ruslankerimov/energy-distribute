@@ -1,11 +1,12 @@
 #include <iostream>
+#define INSTANTIATE_REAL_GENOME
 #include "Energy.h"
 
 using namespace std;
 
 const long double PI = 2 * asin(1);
 
-Energy * Energy::instance = 0;
+Energy * Energy::instance = NULL;
 
 Energy::Energy()
 {
@@ -70,6 +71,7 @@ void Energy::solve()
     fillFromGenome(genome);
     calculate(genome, true);
     print();
+    report();
 }
 
 float Energy::objective(GAGenome & g)
@@ -629,4 +631,77 @@ double Energy::wrap_getYCell(int i, int j, vector <double> x)
 double Energy::wrap_getFCell(int i, vector <double> x)
 {
     return Energy::getInstance()->getFCell(i, x);
+}
+
+void Energy::report()
+{
+    TiXmlDocument reportFile("output/1/report.xml");
+    TiXmlDeclaration * decl = new TiXmlDeclaration("1.0", "utf-8", "");
+    TiXmlElement * report = new TiXmlElement("report");
+
+    TiXmlDocument busDataFile("input/set_2/bus_data.xml");
+    busDataFile.LoadFile();
+    TiXmlNode * busElements = busDataFile.FirstChildElement("bus-data")
+            ->FirstChildElement("buses")->Clone();
+
+    TiXmlDocument lineDataFile("input/set_2/lines_data.xml");
+    lineDataFile.LoadFile();
+    TiXmlNode * linesElement = lineDataFile.FirstChildElement("lines-data")
+            ->FirstChildElement("lines")->Clone();
+
+    TiXmlElement * solve = new TiXmlElement("solve");
+
+    reportFile.LinkEndChild(decl);
+    reportFile.LinkEndChild(report);
+    report->LinkEndChild(busElements);
+    report->LinkEndChild(linesElement);
+    report->LinkEndChild(solve);
+
+    TiXmlElement * busElement = busElements->FirstChildElement("bus");
+    do
+    {
+        int no = atoi(busElement->FirstChildElement("no")->GetText());
+        EnergyBus * bus = allBus.getBus(no);
+
+        char str[100];
+        sprintf(str, "%f", bus->getVoltage());
+        busElement->FirstChildElement("voltage")->FirstChildElement("value")->Clear();
+        busElement->FirstChildElement("voltage")->FirstChildElement("value")
+                ->LinkEndChild(new TiXmlText(str));
+
+        sprintf(str, "%f", bus->getAngle());
+        busElement->FirstChildElement("angle")->FirstChildElement("value")->Clear();
+        busElement->FirstChildElement("angle")->FirstChildElement("value")
+                ->LinkEndChild(new TiXmlText(str));
+
+//        sprintf(str, "%f", bus->getActivePowerGen());
+//        busElement->FirstChildElement("power-gen")->FirstChildElement("active")
+//                ->FirstChildElement("value")->Clear();
+//        busElement->FirstChildElement("power-gen")->FirstChildElement("active")
+//            ->FirstChildElement("value")->LinkEndChild(new TiXmlText(str));
+
+//        sprintf(str, "%f", bus->getReactivePowerGen());
+//        busElement->FirstChildElement("power-gen")->FirstChildElement("reactive")
+//                ->FirstChildElement("value")->Clear();
+//        busElement->FirstChildElement("power-gen")->FirstChildElement("reactive")
+//            ->FirstChildElement("value")->LinkEndChild(new TiXmlText(str));
+//
+//        sprintf(str, "%f", bus->cost());
+//        busElement->FirstChildElement("cost")->LinkEndChild(new TiXmlElement("total"))
+//                ->LinkEndChild(new TiXmlText(str));
+//
+//        sprintf(str, "%f", bus->getG());
+//        busElement->LinkEndChild(new TiXmlElement("G"))
+//                ->LinkEndChild(new TiXmlText(str));
+//
+//        sprintf(str, "%f", bus->getB());
+//        busElement->LinkEndChild(new TiXmlElement("B"))
+//                ->LinkEndChild(new TiXmlText(str));
+
+        busElement = busElement->NextSiblingElement("bus");
+    }
+    while (busElement);
+
+
+    reportFile.SaveFile();
 }

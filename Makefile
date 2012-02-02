@@ -44,7 +44,7 @@ endif
 # Preprocessor directives
 #****************************************************************************
 
-DEFS :=
+DEFS     := -DTIXML_USE_STL
 
 #****************************************************************************
 # Include paths
@@ -63,31 +63,29 @@ CXXFLAGS := $(CXXFLAGS) $(DEFS)
 # Source files
 #****************************************************************************
 
-SRC_DIR  := src/
-SRCS     := $(SRC_DIR)energy.cpp $(SRC_DIR)Newton.cpp $(SRC_DIR)Gauss.cpp $(SRC_DIR)EnergyBus.cpp $(SRC_DIR)EnergyLine.cpp
-           
-OBJS     := $(patsubst %.cpp, %.o, $(SRCS))
+SRC_DIR         := src/
+TINIXML_LIB_DIR := lib/tinyxml/
+SRCS            := $(wildcard $(SRC_DIR)*.cpp) $(filter-out %xmltest.cpp, $(wildcard $(TINIXML_LIB_DIR)*.cpp))
+
+OBJS     := $(patsubst %.cpp, %.o, $(patsubst %.c, %.o, $(SRCS)))
 
 #****************************************************************************
 # Targets of the build
 #****************************************************************************
  
-OUTPUT := energy
+OUTPUT := main
 
 all: $(OUTPUT)
 GAlib:
-	$(MAKE) -C lib/ga/ DEBUG=$(DEBUG) PROFILE=$(PROFILE) 
-tinyxml:
-	$(MAKE) -C lib/tinyxml/ TINYXML_USE_STL=YES DEBUG=$(DEBUG) PROFILE=$(PROFILE)
+	$(MAKE) -C lib/ga/ DEBUG=$(DEBUG) PROFILE=$(PROFILE)
 
 EXTRA_LIBS := -lga
-# lib/tinyxml/tinyxml.o lib/tinyxml/tinystr.o lib/tinyxml/tinyxmlparser.o lib/tinyxml/tinyxmlerror.o
 
 #****************************************************************************
 # Output
 #****************************************************************************
 
-$(OUTPUT): $(OBJS) GAlib tinyxml $(SRC_DIR)Energy.cpp
+$(OUTPUT): $(OBJS) GAlib
 	$(LD) -o $@ $(LDFLAGS) $(OBJS) $(LIBS) $(EXTRA_LIBS)
 
 #****************************************************************************
@@ -95,11 +93,27 @@ $(OUTPUT): $(OBJS) GAlib tinyxml $(SRC_DIR)Energy.cpp
 #****************************************************************************
 
 # Rules for compiling source files to object files
-$(SRC_DIR)%.o : $(SRC_DIR)%.cpp
+# For C++
+%.o : %.cpp
 	$(CXX) -c $(CXXFLAGS) $(INCS) $< -o $@
 
-$(SRC_DIR)%.o : $(SRC_DIR)%.c
+# For C
+%.o : %.c
 	$(CC) -c $(CFLAGS) $(INCS) $< -o $@
 
 clean:
 	-rm -f $(OBJS) $(OUTPUT)
+
+#****************************************************************************
+# Dependencies
+#****************************************************************************
+VPATH = $(SRC_DIR)
+
+$(SRC_DIR)main.o: Energy.h 
+Energy.h: EnergyBus.h EnergyLine.h
+$(SRC_DIR)Energy.o: Energy.h
+$(SRC_DIR)EnergyBus.o: EnergyBus.h
+$(SRC_DIR)EnergyLine.o: EnergyLine.h
+$(SRC_DIR)Newton.o: Newton.h
+Newton.h: Gauss.h
+$(SRC_DIR)Gauss.o: Gauss.h 

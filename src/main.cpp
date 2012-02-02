@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Energy.cpp"
+#include "Energy.h"
 
 using namespace std;
 

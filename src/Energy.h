@@ -2,18 +2,12 @@
 #define ENERGY_INCLUDED
 
 #include <vector>
-#include <ga/ga.h>
 #include <math.h>
 #include <ctime>
 
-//#include "tinyxml/tinyxml.h"
-#include "../lib/tinyxml/tinyxml.cpp"
-#include "../lib/tinyxml/tinystr.cpp"
-#include "../lib/tinyxml/tinyxmlerror.cpp"
-#include "../lib/tinyxml/tinyxmlparser.cpp"
-
-#define INSTANTIATE_REAL_GENOME
-#include <ga/GARealGenome.h>
+#include "ga/ga.h"
+#include "ga/GARealGenome.h"
+#include "tinyxml/tinyxml.h"
 
 #include "EnergyBus.h"
 #include "EnergyLine.h"
