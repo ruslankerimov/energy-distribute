@@ -1,5 +1,6 @@
-#include <iostream>
 #include "EnergyLine.h"
+
+using namespace std;
 
 EnergyLine::EnergyLine(EnergyBus * fromBus, EnergyBus * toBus, double r, double x)
 {
@@ -31,6 +32,33 @@ double EnergyLine::getB()
     return B;
 }
 
+double EnergyLine::getActivePower()
+{
+
+    double Vk = from->getVoltage();
+    double Vm = to->getVoltage();
+    double Dk = from->getAngle();
+    double Dm = to->getAngle();
+    double Gkm = getG();
+
+    // @todo 100 вынести в констатну везде
+    return 100 * Gkm * (Vk * Vk + Vm * Vm - 2 * Vk * Vm * cos(Dk - Dm));
+}
+
+double EnergyLine::getReactivePower()
+{
+
+//    double Vk = from->getVoltage();
+//    double Vm = to->getVoltage();
+//    double Dk = from->getAngle();
+//    double Dm = to->getAngle();
+//    double Bkm = getB();
+
+//    @todo подумать
+//    return 100 * Bkm * (Vk * Vk + Vm * Vm + 2 * Vk * Vm * cos(Dk - Dm));
+    return 0;
+}
+
 EnergyBus * EnergyLine::getFrom()
 {
     return from;
@@ -41,49 +69,9 @@ EnergyBus * EnergyLine::getTo()
     return to;
 }
 
-
-EnergyLineSet::EnergyLineSet()
+void EnergyLine::display()
 {
-
-}
-
-EnergyLineSet * EnergyLineSet::addLine(EnergyLine * line)
-{
-    // @todo правильно составить ключ
-    int key = line->getFrom()->getNo() * 1000 + line->getTo()->getNo();
-    lines[key] = line;
-    //@todo
-    links[line->getFrom()->getNo()].push_back(line);
-    links[line->getTo()->getNo()].push_back(line);
-    line->getFrom()->addLinkedBus(line->getTo(), line->getG(), line->getB());
-    line->getTo()->addLinkedBus(line->getFrom(), line->getG(), line->getB());
-    return this;
-}
-
-EnergyLine * EnergyLineSet::getLine(int from, int to)
-{
-    int key = from * 1000 + to;
-    if (lines.count(key) < 1)
-    {
-        key = to * 1000 + from;
-    }
-    // @todo узкое место, нужна проверка на map::end()
-    return lines.find(key)->second;
-}
-
-int EnergyLineSet::size()
-{
-    return lines.size();
-}
-
-vector <EnergyLine*> EnergyLineSet::getBusLines(int busNo)
-{
-    return links[busNo];
-}
-
-EnergyLine* EnergyLineSet::operator [](int n)
-{
-    it = lines.begin();
-    for (int i = 0; i < n; ++i, ++it);
-    return it->second;
+    cout << endl << "*** Линия из " << from->getNo() << " в " << to->getNo() << " *** "
+            << "G=" << getG() << "; B=" << getB() << "; R=" << R << "; X=" << X
+            << "; P=" << getActivePower() << "; Q=" << getReactivePower();
 }

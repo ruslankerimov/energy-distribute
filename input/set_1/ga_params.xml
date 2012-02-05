@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ga-params>
-    <number-of-generation>3000</number-of-generation>
+    <number-of-generation>500</number-of-generation>
     <population-size>3</population-size>
-    <mutation-probability>0.3</mutation-probability>
-    <crossover-probability>0.8</crossover-probability>
-    <score-filename>output/bog.dat</score-filename>
+    <mutation-probability>0.8</mutation-probability>
+    <crossover-probability>0.4</crossover-probability>
+    <score-filename>bog.dat</score-filename>
     <score-frequency>10</score-frequency>
     <score-flush-frequency>50</score-flush-frequency>
 </ga-params>

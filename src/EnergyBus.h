@@ -1,6 +1,7 @@
 #ifndef ENERGY_BUS_INCLUDED
 #define ENERGY_BUS_INCLUDED
 
+#include <iostream>
 #include <vector>
 #include <map>
 
@@ -73,31 +74,8 @@ public:
     bool isBalancedBus();
 
     bool checkRestractions();
-};
 
-class EnergyBusSet
-{
-private:
-    map <int, EnergyBus *> buses;
-    map <int, EnergyBus *>::iterator it;
-public:
-    EnergyBusSet();
-
-    EnergyBus* getBus(int);
-
-    EnergyBusSet* addBus(EnergyBus *);
-
-    double cost();
-
-    double getActivePowerLoad();
-
-    double getActivePowerGen();
-
-    int size();
-
-    bool checkRestractions();
-
-    EnergyBus* operator [](int);
+    void display();
 };
 
 #endif

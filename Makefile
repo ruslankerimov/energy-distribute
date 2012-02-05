@@ -51,6 +51,7 @@ DEFS     := -DTIXML_USE_STL
 #****************************************************************************
 
 INCS     := -Ilib
+EXTRA_LIBS := -lga
 
 #****************************************************************************
 # Makefile code common to all platforms
@@ -79,7 +80,14 @@ all: $(OUTPUT)
 GAlib:
 	$(MAKE) -C lib/ga/ DEBUG=$(DEBUG) PROFILE=$(PROFILE)
 
-EXTRA_LIBS := -lga
+FOR_LISTING_FILES = $(wildcard $(SRC_DIR)*.h) $(wildcard $(SRC_DIR)*.cpp)
+listing.txt: $(FOR_LISTING_FILES)
+	echo "" > $@
+	for file in $(FOR_LISTING_FILES); \
+	do \
+		echo "/* File $$file */\n" >> $@; \
+		cat $$file >> $@ ; \
+	done
 
 #****************************************************************************
 # Output
@@ -110,10 +118,14 @@ clean:
 VPATH = $(SRC_DIR)
 
 $(SRC_DIR)main.o: Energy.h 
-Energy.h: EnergyBus.h EnergyLine.h
+Energy.h: EnergyBus.h EnergyBusSet.h EnergyLine.h EnergyLineSet.h
 $(SRC_DIR)Energy.o: Energy.h
 $(SRC_DIR)EnergyBus.o: EnergyBus.h
+$(SRC_DIR)EnergyBusSet.o: EnergyBusSet.h
+EnergyBusSet.h: EnergyBus.h
 $(SRC_DIR)EnergyLine.o: EnergyLine.h
+$(SRC_DIR)EnergyLineSet.o: EnergyLineSet.h
+EnergyLineSet.h: EnergyLine.h
 $(SRC_DIR)Newton.o: Newton.h
 Newton.h: Gauss.h
 $(SRC_DIR)Gauss.o: Gauss.h 

@@ -4,13 +4,16 @@
 #include <vector>
 #include <math.h>
 #include <ctime>
+#include <string>
 
 #include "ga/ga.h"
 #include "ga/GARealGenome.h"
 #include "tinyxml/tinyxml.h"
 
 #include "EnergyBus.h"
+#include "EnergyBusSet.h"
 #include "EnergyLine.h"
+#include "EnergyLineSet.h"
 #include "Newton.h"
 
 using namespace std;
@@ -31,9 +34,8 @@ private:
     void parseBusData();
     void parseLinesData();
     void parseGAparams();
-    void calculate(GARealGenome, bool);
+    void calculate();
     void fillFromGenome(GARealGenome);
-    double getLosses();
 
     string inputDir, outputDir;
     EnergyBus * balanceBus;
@@ -52,8 +54,9 @@ public:
     static double wrap_getYCell(int, int, vector <double>);
     static double wrap_getFCell(int, vector <double>);
 
-    void setup();
-    void print();
+    void setup(string, string);
+    void display();
+    void progress(float);
     void report();
     void solve();
 };
