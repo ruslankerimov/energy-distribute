@@ -74,7 +74,7 @@ OBJS     := $(patsubst %.cpp, %.o, $(patsubst %.c, %.o, $(SRCS)))
 # Targets of the build
 #****************************************************************************
  
-OUTPUT := main
+OUTPUT := energy
 
 all: $(OUTPUT)
 GAlib:
@@ -117,9 +117,10 @@ clean:
 #****************************************************************************
 VPATH = $(SRC_DIR)
 
-$(SRC_DIR)main.o: Energy.h 
-Energy.h: EnergyBus.h EnergyBusSet.h EnergyLine.h EnergyLineSet.h
-$(SRC_DIR)Energy.o: Energy.h
+$(SRC_DIR)energy.o: EnergyAlgorithmBee.h
+EnergyAlgorithmBee.h: EnergyAlgorithm.h
+EnergyAlgorithm.h: EnergyBus.h EnergyBusSet.h EnergyLine.h EnergyLineSet.h
+$(SRC_DIR)EnergyAlgorithm.o: EnergyAlgorithm.h
 $(SRC_DIR)EnergyBus.o: EnergyBus.h
 $(SRC_DIR)EnergyBusSet.o: EnergyBusSet.h
 EnergyBusSet.h: EnergyBus.h

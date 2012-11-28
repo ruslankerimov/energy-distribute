@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <vector>
+#include "NewtonFunctions.h"
 #include "Gauss.h"
 
 using namespace std;
@@ -10,7 +11,8 @@ using namespace std;
 /**
  * Класс для решения нелинейных систем уравнений
  */
-class Newton
+class Newton:
+        public NewtonFunctions
 {
 private:
     double EPS;
@@ -21,12 +23,12 @@ private:
     vector <vector <double> > getY();
     vector <double> getF();
     double getEPS();
-//protected:
-    virtual double getYCell(int, int, vector <double>);
-    virtual double getFCell(int, vector <double>);
-protected:
-    Newton(double, int, bool);
 public:
+    Newton(
+            double,
+            int,
+            bool
+    );
     int solve (vector <double> &);
 };
 

@@ -115,16 +115,6 @@ vector < vector <double> > Newton::getY()
     return ret;
 }
 
-double Newton::getYCell(int i, int j, vector <double> x)
-{
-    return 1;
-}
-
-double Newton::getFCell(int i, vector <double> x)
-{
-    return 1;
-}
-
 double Newton::getEPS()
 {
     double ret = abs(Z[0]);
