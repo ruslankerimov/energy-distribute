@@ -7,13 +7,13 @@ using namespace std;
 EnergyAlgorithmBee::EnergyAlgorithmBee(string input, string output):
         EnergyAlgorithm(input, output)
 {
-    count_of_scout_bees = 10;
-    count_of_best_areas = 1;
-    count_of_perspective_areas = 0;
-    count_of_bees_to_best_area = 1;
-    count_of_bees_to_perspective_area = 0;
-    neighbourhood_value = 30;
-    max_iterations = 30;
+    count_of_scout_bees = 20;
+    count_of_best_areas = 2;
+    count_of_perspective_areas = 5;
+    count_of_bees_to_best_area = 10;
+    count_of_bees_to_perspective_area = 2;
+    neighbourhood_value = 0.5;
+    max_iterations = 50;
 
     count_of_bees = count_of_scout_bees +
             count_of_bees_to_best_area * count_of_best_areas +

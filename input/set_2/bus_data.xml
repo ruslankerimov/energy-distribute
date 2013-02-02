@@ -7,7 +7,7 @@
             <voltage>
                 <value>1.05</value>
                 <min-value>0.9</min-value>
-                <max-value>1.15</max-value>
+                <max-value>1.1</max-value>
             </voltage>
             <angle>
                 <value>0.0</value>
@@ -55,7 +55,7 @@
             <voltage>
                 <value>1.033</value>
                 <min-value>0.9</min-value>
-                <max-value>1.15</max-value>
+                <max-value>1.1</max-value>
             </voltage>
             <angle>
                 <value>0.0</value>
@@ -103,7 +103,7 @@
             <voltage>
                 <value>1.0</value>
                 <min-value>0.9</min-value>
-                <max-value>1.15</max-value>
+                <max-value>1.1</max-value>
             </voltage>
             <angle>
                 <value>0.0</value>
@@ -126,7 +126,7 @@
             <voltage>
                 <value>1.0</value>
                 <min-value>0.9</min-value>
-                <max-value>1.15</max-value>
+                <max-value>1.1</max-value>
             </voltage>
             <angle>
                 <value>0.0</value>
@@ -149,7 +149,7 @@
             <voltage>
                 <value>1.0058</value>
                 <min-value>0.9</min-value>
-                <max-value>1.15</max-value>
+                <max-value>1.1</max-value>
             </voltage>
             <angle>
                 <value>0.0</value>
@@ -197,7 +197,7 @@
             <voltage>
                 <value>1.0</value>
                 <min-value>0.9</min-value>
-                <max-value>1.15</max-value>
+                <max-value>1.1</max-value>
             </voltage>
             <angle>
                 <value>0.0</value>
@@ -220,7 +220,7 @@
             <voltage>
                 <value>1.0</value>
                 <min-value>0.9</min-value>
-                <max-value>1.15</max-value>
+                <max-value>1.1</max-value>
             </voltage>
             <angle>
                 <value>0.0</value>
@@ -243,7 +243,7 @@
             <voltage>
                 <value>1.023</value>
                 <min-value>0.9</min-value>
-                <max-value>1.15</max-value>
+                <max-value>1.1</max-value>
             </voltage>
             <angle>
                 <value>0.0</value>
@@ -291,7 +291,7 @@
             <voltage>
                 <value>1.0</value>
                 <min-value>0.9</min-value>
-                <max-value>1.15</max-value>
+                <max-value>1.1</max-value>
             </voltage>
             <angle>
                 <value>0.0</value>
@@ -314,7 +314,7 @@
             <voltage>
                 <value>1.0</value>
                 <min-value>0.9</min-value>
-                <max-value>1.15</max-value>
+                <max-value>1.1</max-value>
             </voltage>
             <angle>
                 <value>0.0</value>
@@ -337,7 +337,7 @@
             <voltage>
                 <value>1.0913</value>
                 <min-value>0.9</min-value>
-                <max-value>1.15</max-value>
+                <max-value>1.1</max-value>
             </voltage>
             <angle>
                 <value>0.0</value>
@@ -385,7 +385,7 @@
             <voltage>
                 <value>1.0</value>
                 <min-value>0.9</min-value>
-                <max-value>1.15</max-value>
+                <max-value>1.1</max-value>
             </voltage>
             <angle>
                 <value>0.0</value>
@@ -408,7 +408,7 @@
             <voltage>
                 <value>1.0883</value>
                 <min-value>0.9</min-value>
-                <max-value>1.15</max-value>
+                <max-value>1.1</max-value>
             </voltage>
             <angle>
                 <value>0.0</value>
@@ -456,7 +456,7 @@
             <voltage>
                 <value>1.0</value>
                 <min-value>0.9</min-value>
-                <max-value>1.15</max-value>
+                <max-value>1.1</max-value>
             </voltage>
             <angle>
                 <value>0.0</value>
@@ -479,7 +479,7 @@
             <voltage>
                 <value>1.0</value>
                 <min-value>0.9</min-value>
-                <max-value>1.15</max-value>
+                <max-value>1.1</max-value>
             </voltage>
             <angle>
                 <value>0.0</value>
@@ -502,7 +502,7 @@
             <voltage>
                 <value>1.0</value>
                 <min-value>0.9</min-value>
-                <max-value>1.15</max-value>
+                <max-value>1.1</max-value>
             </voltage>
             <angle>
                 <value>0.0</value>
@@ -525,7 +525,7 @@
             <voltage>
                 <value>1.0</value>
                 <min-value>0.9</min-value>
-                <max-value>1.15</max-value>
+                <max-value>1.1</max-value>
             </voltage>
             <angle>
                 <value>0.0</value>
@@ -548,7 +548,7 @@
             <voltage>
                 <value>1.0</value>
                 <min-value>0.9</min-value>
-                <max-value>1.15</max-value>
+                <max-value>1.1</max-value>
             </voltage>
             <angle>
                 <value>0.0</value>
@@ -571,7 +571,7 @@
             <voltage>
                 <value>1.0</value>
                 <min-value>0.9</min-value>
-                <max-value>1.15</max-value>
+                <max-value>1.1</max-value>
             </voltage>
             <angle>
                 <value>0.0</value>
@@ -594,7 +594,7 @@
             <voltage>
                 <value>1.0</value>
                 <min-value>0.9</min-value>
-                <max-value>1.15</max-value>
+                <max-value>1.1</max-value>
             </voltage>
             <angle>
                 <value>0.0</value>
@@ -617,7 +617,7 @@
             <voltage>
                 <value>1.0</value>
                 <min-value>0.9</min-value>
-                <max-value>1.15</max-value>
+                <max-value>1.1</max-value>
             </voltage>
             <angle>
                 <value>0.0</value>
@@ -640,7 +640,7 @@
             <voltage>
                 <value>1.0</value>
                 <min-value>0.9</min-value>
-                <max-value>1.15</max-value>
+                <max-value>1.1</max-value>
             </voltage>
             <angle>
                 <value>0.0</value>
@@ -663,7 +663,7 @@
             <voltage>
                 <value>1.0</value>
                 <min-value>0.9</min-value>
-                <max-value>1.15</max-value>
+                <max-value>1.1</max-value>
             </voltage>
             <angle>
                 <value>0.0</value>
@@ -686,7 +686,7 @@
             <voltage>
                 <value>1.0</value>
                 <min-value>0.9</min-value>
-                <max-value>1.15</max-value>
+                <max-value>1.1</max-value>
             </voltage>
             <angle>
                 <value>0.0</value>
@@ -709,7 +709,7 @@
             <voltage>
                 <value>1.0</value>
                 <min-value>0.9</min-value>
-                <max-value>1.15</max-value>
+                <max-value>1.1</max-value>
             </voltage>
             <angle>
                 <value>0.0</value>
@@ -732,7 +732,7 @@
             <voltage>
                 <value>1.0</value>
                 <min-value>0.9</min-value>
-                <max-value>1.15</max-value>
+                <max-value>1.1</max-value>
             </voltage>
             <angle>
                 <value>0.0</value>
@@ -755,7 +755,7 @@
             <voltage>
                 <value>1.0</value>
                 <min-value>0.9</min-value>
-                <max-value>1.15</max-value>
+                <max-value>1.1</max-value>
             </voltage>
             <angle>
                 <value>0.0</value>
@@ -778,7 +778,7 @@
             <voltage>
                 <value>1.0</value>
                 <min-value>0.9</min-value>
-                <max-value>1.15</max-value>
+                <max-value>1.1</max-value>
             </voltage>
             <angle>
                 <value>0.0</value>
@@ -801,7 +801,7 @@
             <voltage>
                 <value>1.0</value>
                 <min-value>0.9</min-value>
-                <max-value>1.15</max-value>
+                <max-value>1.1</max-value>
             </voltage>
             <angle>
                 <value>0.0</value>
@@ -824,7 +824,7 @@
             <voltage>
                 <value>1.0</value>
                 <min-value>0.9</min-value>
-                <max-value>1.15</max-value>
+                <max-value>1.1</max-value>
             </voltage>
             <angle>
                 <value>0.0</value>

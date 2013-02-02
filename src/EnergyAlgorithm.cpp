@@ -84,7 +84,7 @@ double EnergyAlgorithm::fitness(vector <double> cords)
     // @todo, можно от этого шага избивиться
     if ( ! allBus.checkRestractions())
     {
-        cost += 1000;
+        cost += 100000;
     }
 
     return 1 / cost;

@@ -24,7 +24,7 @@ double EnergyLine::getX()
 
 double EnergyLine::getG()
 {
-    return G;
+    return -G;
 }
 
 double EnergyLine::getB()
@@ -42,7 +42,7 @@ double EnergyLine::getActivePower()
     double Gkm = getG();
 
     // @todo 100 вынести в констатну везде
-    return 100 * Gkm * (Vk * Vk + Vm * Vm - 2 * Vk * Vm * cos(Dk - Dm));
+    return -100 * Gkm * (Vk * Vk + Vm * Vm - 2 * Vk * Vm * cos(Dk - Dm));
 }
 
 double EnergyLine::getReactivePower()
