@@ -16,7 +16,7 @@ RANLIB           := ranlib
 DEBUG_CFLAGS     := -Wall -Wno-format -g -DDEBUG
 RELEASE_CFLAGS   := -Wall -Wno-unknown-pragmas -Wno-format -O3
 
-LIBS             := -Llib/ga
+LIBS             := -Llib/GA/ga
 
 DEBUG_CXXFLAGS   := $(DEBUG_CFLAGS) 
 RELEASE_CXXFLAGS := $(RELEASE_CFLAGS)
@@ -50,7 +50,7 @@ DEFS     := -DTIXML_USE_STL
 # Include paths
 #****************************************************************************
 
-INCS     := -Ilib
+INCS     := -Ilib -Ilib/GA
 EXTRA_LIBS := -lga
 
 #****************************************************************************
@@ -64,9 +64,12 @@ CXXFLAGS := $(CXXFLAGS) $(DEFS)
 # Source files
 #****************************************************************************
 
-SRC_DIR         := src/
-TINIXML_LIB_DIR := lib/tinyxml/
-SRCS            := $(wildcard $(SRC_DIR)*.cpp) $(wildcard lib/ACO/src/*.cpp) $(wildcard lib/ABC/src/*.cpp) $(filter-out %xmltest.cpp, $(wildcard $(TINIXML_LIB_DIR)*.cpp))
+SRC_DIR  := src/
+SRCS     := $(wildcard $(SRC_DIR)*.cpp) \
+$(wildcard lib/ACO/src/*.cpp) \
+$(wildcard lib/ABC/src/*.cpp) \
+$(wildcard lib/newton/*.cpp) \
+$(filter-out %xmltest.cpp, $(wildcard lib/tinyxml/*.cpp)) 
 
 OBJS     := $(patsubst %.cpp, %.o, $(patsubst %.c, %.o, $(SRCS)))
 
@@ -77,8 +80,8 @@ OBJS     := $(patsubst %.cpp, %.o, $(patsubst %.c, %.o, $(SRCS)))
 OUTPUT := energy
 
 all: $(OUTPUT)
-GAlib:
-	$(MAKE) -C lib/ga/ DEBUG=$(DEBUG) PROFILE=$(PROFILE)
+GA:
+	$(MAKE) -C lib/GA/ga DEBUG=$(DEBUG) PROFILE=$(PROFILE)
 
 FOR_LISTING_FILES = $(wildcard $(SRC_DIR)*.h) $(wildcard $(SRC_DIR)*.cpp)
 listing.txt: $(FOR_LISTING_FILES)
@@ -93,7 +96,7 @@ listing.txt: $(FOR_LISTING_FILES)
 # Output
 #****************************************************************************
 
-$(OUTPUT): $(OBJS) GAlib
+$(OUTPUT): $(OBJS) GA
 	$(LD) -o $@ $(LDFLAGS) $(OBJS) $(LIBS) $(EXTRA_LIBS)
 
 #****************************************************************************
@@ -115,18 +118,14 @@ clean:
 #****************************************************************************
 # Dependencies
 #****************************************************************************
-VPATH = $(SRC_DIR)
 
-$(SRC_DIR)energy.o: EnergyAlgorithmBee.h
-EnergyAlgorithmBee.h: EnergyAlgorithm.h
-EnergyAlgorithm.h: EnergyBus.h EnergyBusSet.h EnergyLine.h EnergyLineSet.h
-$(SRC_DIR)EnergyAlgorithm.o: EnergyAlgorithm.h
-$(SRC_DIR)EnergyBus.o: EnergyBus.h
-$(SRC_DIR)EnergyBusSet.o: EnergyBusSet.h
-EnergyBusSet.h: EnergyBus.h
-$(SRC_DIR)EnergyLine.o: EnergyLine.h
-$(SRC_DIR)EnergyLineSet.o: EnergyLineSet.h
-EnergyLineSet.h: EnergyLine.h
-$(SRC_DIR)Newton.o: Newton.h
-Newton.h: Gauss.h
-$(SRC_DIR)Gauss.o: Gauss.h 
+$(SRC_DIR)energy.o: $(SRC_DIR)EnergyAlgorithmBee.h
+$(SRC_DIR)EnergyAlgorithmBee.h: $(SRC_DIR)EnergyAlgorithm.h
+$(SRC_DIR)EnergyAlgorithm.h: $(SRC_DIR)EnergyBus.h $(SRC_DIR)EnergyBusSet.h $(SRC_DIR)EnergyLine.h $(SRC_DIR)EnergyLineSet.h
+$(SRC_DIR)EnergyAlgorithm.o: $(SRC_DIR)EnergyAlgorithm.h
+$(SRC_DIR)EnergyBus.o: $(SRC_DIR)EnergyBus.h
+$(SRC_DIR)EnergyBusSet.o: $(SRC_DIR)EnergyBusSet.h
+$(SRC_DIR)EnergyBusSet.h: $(SRC_DIR)EnergyBus.h
+$(SRC_DIR)EnergyLine.o: $(SRC_DIR)EnergyLine.h
+$(SRC_DIR)EnergyLineSet.o: $(SRC_DIR)EnergyLineSet.h
+$(SRC_DIR)EnergyLineSet.h: $(SRC_DIR)EnergyLine.h

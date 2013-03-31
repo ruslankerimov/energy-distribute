@@ -10,19 +10,25 @@ int main(int argc, char** argv)
 {
     // Вытаскиваем из параметров нужные
     char *s = NULL;
+    char *t = NULL;
     int c;
 
     opterr = 0;
 
-    while ((c = getopt (argc, argv, "s:")) != -1)
+    while ((c = getopt (argc, argv, "s:t:")) != -1)
     {
         switch (c)
         {
             case 's':
               s = optarg;
               break;
+            case 't':
+              t = optarg;
+              break;
             case '?':
               if (optopt == 's')
+                fprintf(stderr, "Option -%c requires an argument.\n", optopt);
+              else if (optopt == 't')
                 fprintf(stderr, "Option -%c requires an argument.\n", optopt);
               else if (isprint(optopt))
                 fprintf(stderr, "Unknown option `-%c'.\n", optopt);
@@ -53,8 +59,18 @@ int main(int argc, char** argv)
         outputDir += "default/";
     }
 
-    EnergyAlgorithmGA algorithm(inputDir, outputDir);
-    algorithm.solve();
+    string type = t;
+
+    if (type == "ACO") {
+        EnergyAlgorithmACO algorithm(inputDir, outputDir);
+        algorithm.solve();
+    } else if (type == "ABC") {
+        EnergyAlgorithmABC algorithm(inputDir, outputDir);
+        algorithm.solve();
+    } else {
+        EnergyAlgorithmGA algorithm(inputDir, outputDir);
+        algorithm.solve();
+    }
 
     return 0;
 }

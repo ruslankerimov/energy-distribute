@@ -12,7 +12,7 @@
 #include "EnergyBusSet.h"
 #include "EnergyLine.h"
 #include "EnergyLineSet.h"
-#include "Newton.h"
+#include "newton/Newton.h"
 
 using namespace std;
 

@@ -1,7 +1,7 @@
 #ifndef ENERGY_ALGORITHM_ACO_H_INCLUDED
 #define ENERGY_ALGORITHM_ACO_H_INCLUDED
 
-#include "../lib/ACO/src/ACO.h"
+#include "ACO/src/ACO.h"
 #include "EnergyAlgorithm.h"
 
 using namespace std;
