@@ -1,6 +1,8 @@
 #include <string>
 #include <unistd.h>
-#include "EnergyAlgorithmBee.h"
+#include "EnergyAlgorithmACO.h"
+#include "EnergyAlgorithmABC.h"
+#include "EnergyAlgorithmGA.h"
 
 using namespace std;
 
@@ -51,7 +53,7 @@ int main(int argc, char** argv)
         outputDir += "default/";
     }
 
-    EnergyAlgorithmBee algorithm(inputDir, outputDir);
+    EnergyAlgorithmGA algorithm(inputDir, outputDir);
     algorithm.solve();
 
     return 0;

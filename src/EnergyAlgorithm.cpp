@@ -17,38 +17,6 @@ EnergyAlgorithm::EnergyAlgorithm(string input, string output):
 void EnergyAlgorithm::solve()
 {
 
-//    GARealAlleleSetArray alleles;
-//    for (int i = 0, size = genBus.size(); i < size; ++i)
-//    {
-//        EnergyBus * bus = genBus[i];
-//        if (bus->isBalancedBus())
-//        {
-//            continue;
-//        }
-//        double * powerLimits = bus->getPowerGenLimits();
-//        alleles.add(powerLimits[0], powerLimits[1], GAAllele::INCLUSIVE, GAAllele::INCLUSIVE);
-//    }
-//
-//    GARealGenome genome(alleles, Energy::wrap_objective);
-//    genome.crossover(GARealGenome::OnePointCrossover);
-//    GASteadyStateGA ga(genome);
-//    ga.parameters(params);
-//    // @todo можно здесь подумать
-//    GANoScaling scaling;
-//    ga.scaling(scaling);
-//    GATournamentSelector selector;
-//    ga.selector(selector);
-//
-//    progress(0);
-//    t1 = clock();
-//    ga.evolve();
-//    t2 = clock();
-//
-//    genome = ga.statistics().bestIndividual();
-//    fillFromGenome(genome);
-//    calculate();
-//    display();
-//    report();
 }
 
 void EnergyAlgorithm::start_solve()
@@ -402,7 +370,8 @@ void EnergyAlgorithm::display()
 {
     cout << endl << "*** Исходные данные ***";
     cout << endl << "Генераторные узлы: ";
-    for (int i = 0, size = genBus.size(); i < size; ++i)
+    for (int i = 0, size = genBus.size(); i
+    < size; ++i)
     {
         cout << genBus[i]->getNo() << " ";
     }

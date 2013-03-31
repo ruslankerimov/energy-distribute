@@ -48,7 +48,7 @@ protected:
     void calculate();
     void fill(vector <double>);
 public:
-    virtual double fitness(vector <double>);
+    double fitness(vector <double>);
     void solve();
 };
 

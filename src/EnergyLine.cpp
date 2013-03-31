@@ -47,16 +47,13 @@ double EnergyLine::getActivePower()
 
 double EnergyLine::getReactivePower()
 {
+    double Vk = from->getVoltage();
+    double Vm = to->getVoltage();
+    double Dk = from->getAngle();
+    double Dm = to->getAngle();
+    double Bkm = getB();
 
-//    double Vk = from->getVoltage();
-//    double Vm = to->getVoltage();
-//    double Dk = from->getAngle();
-//    double Dm = to->getAngle();
-//    double Bkm = getB();
-
-//    @todo подумать
-//    return 100 * Bkm * (Vk * Vk + Vm * Vm + 2 * Vk * Vm * cos(Dk - Dm));
-    return 0;
+    return 100 * Bkm * (Vk * Vk + Vm * Vm - 2 * Vk * Vm * cos(Dk - Dm));
 }
 
 EnergyBus * EnergyLine::getFrom()

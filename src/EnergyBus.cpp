@@ -191,7 +191,7 @@ bool EnergyBus::isBalancedBus()
 bool EnergyBus::checkRestractions()
 {
     return activePowerGen <= maxActivePowerGen && activePowerGen >= minActivePowerGen
-//        && reactivePowerGen <= maxReactivePowerGen && reactivePowerGen >= minReactivePowerGen
+        && reactivePowerGen <= maxReactivePowerGen && reactivePowerGen >= minReactivePowerGen
         && voltage <= maxVoltage && voltage >= minVoltage
         && angle <= maxAngle && angle >= minAngle;
 }

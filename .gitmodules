@@ -1,0 +1,9 @@
+[submodule "lib/ACO"]
+	path = lib/ACO
+	url = git@github.com:ruslankerimov/ACO.git
+[submodule "lib/ABC"]
+	path = lib/ABC
+	url = git@github.com:ruslankerimov/ABC.git
+[submodule "lib/GA"]
+	path = lib/GA
+	url = git@github.com:ruslankerimov/GA.git

@@ -66,7 +66,7 @@ CXXFLAGS := $(CXXFLAGS) $(DEFS)
 
 SRC_DIR         := src/
 TINIXML_LIB_DIR := lib/tinyxml/
-SRCS            := $(wildcard $(SRC_DIR)*.cpp) $(filter-out %xmltest.cpp, $(wildcard $(TINIXML_LIB_DIR)*.cpp))
+SRCS            := $(wildcard $(SRC_DIR)*.cpp) $(wildcard lib/ACO/src/*.cpp) $(wildcard lib/ABC/src/*.cpp) $(filter-out %xmltest.cpp, $(wildcard $(TINIXML_LIB_DIR)*.cpp))
 
 OBJS     := $(patsubst %.cpp, %.o, $(patsubst %.c, %.o, $(SRCS)))
 
