@@ -17,6 +17,7 @@ private:
     double reactivePowerGen, minReactivePowerGen, maxReactivePowerGen;
     double activePowerGen, minActivePowerGen, maxActivePowerGen;
     double G, B;
+    double compensation, minCompensation, maxCompensation;
     vector <double*> costCoefficents;
     vector <EnergyBus*> links;
 
@@ -55,6 +56,14 @@ public:
 
     EnergyBus * setReactivePowerLoad(double);
 
+    double getCompensation();
+
+    EnergyBus * setCompensation(double);
+
+    EnergyBus * setCompensationLimits(double, double);
+
+    double * getCompensationLimits();
+
     double * getPowerGenLimits();
 
     EnergyBus * setPowerGenLimits(double minP, double maxP, double minQ, double maxQ);
@@ -72,6 +81,8 @@ public:
     bool isGeneratorBus();
 
     bool isBalancedBus();
+
+    bool isWithCompensation;
 
     bool checkRestractions();
 

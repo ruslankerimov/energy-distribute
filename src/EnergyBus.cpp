@@ -12,6 +12,8 @@ EnergyBus::EnergyBus(int n, int c)
     reactivePowerGen = minReactivePowerGen = maxReactivePowerGen = 0;
     activePowerGen = minActivePowerGen = maxActivePowerGen = 0;
     G = B = 0;
+    isWithCompensation = false;
+    compensation = minCompensation = maxCompensation = 0;
 }
 
 int EnergyBus::getNo()
@@ -118,13 +120,39 @@ EnergyBus * EnergyBus::setReactivePowerGen(double value)
 
 double EnergyBus::getReactivePowerLoad()
 {
-    return reactivePowerLoad;
+    return reactivePowerLoad - compensation;
 }
 
 EnergyBus * EnergyBus::setReactivePowerLoad(double value)
 {
     reactivePowerLoad = value;
     return this;
+}
+
+double EnergyBus::getCompensation()
+{
+    return compensation;
+}
+
+EnergyBus * EnergyBus::setCompensation(double value)
+{
+    compensation = value;
+    return this;
+}
+
+EnergyBus * EnergyBus::setCompensationLimits(double min, double max)
+{
+    minCompensation = min;
+    maxCompensation = max;
+    return this;
+}
+
+double * EnergyBus::getCompensationLimits()
+{
+  double * ret = new double[2];
+  ret[0] = minCompensation;
+  ret[1] = maxCompensation;
+  return ret;
 }
 
 double * EnergyBus::getPowerGenLimits()
@@ -202,6 +230,10 @@ void EnergyBus::display()
         << "G=" << getG() << "; B=" << getB()
         << "; V=" << voltage << "; Angle=" << angle
         << "; Pload=" << activePowerLoad << "; Qload=" << reactivePowerLoad;
+
+    if (isWithCompensation) {
+        cout << "; Compensation=" << compensation;
+    }
 
     if (isGeneratorBus())
     {

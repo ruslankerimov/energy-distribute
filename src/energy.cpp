@@ -61,6 +61,8 @@ int main(int argc, char** argv)
 
     string type = t;
 
+    cout << type << " " << inputDir << " " << outputDir;
+
     if (type == "ACO") {
         EnergyAlgorithmACO algorithm(inputDir, outputDir);
         algorithm.solve();

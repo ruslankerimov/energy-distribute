@@ -47,8 +47,11 @@ protected:
     void report();
     void calculate();
     void fill(vector <double>);
+
+    void fill1(vector <double>);
 public:
     double fitness(vector <double>);
+    double fitness1(vector <double>);
     void solve();
 };
 

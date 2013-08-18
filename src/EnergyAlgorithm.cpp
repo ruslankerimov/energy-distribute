@@ -43,9 +43,37 @@ void EnergyAlgorithm::fill(vector <double> cords)
     }
 }
 
+void EnergyAlgorithm::fill1(vector <double> cords)
+{
+    int j = 0;
+
+    for (int i = 0, size = notGenBus.size(); i < size; ++i)
+    {
+        EnergyBus * bus = notGenBus[i];
+        if (bus->isWithCompensation) {
+            bus->setCompensation(cords[j++]);
+        }
+    }
+}
+
 double EnergyAlgorithm::fitness(vector <double> cords)
 {
     fill(cords);
+    calculate();
+    double cost = allBus.cost();
+
+    // @todo, можно от этого шага избивиться
+    if ( ! allBus.checkRestractions())
+    {
+        cost += 100000;
+    }
+
+    return 1 / cost;
+}
+
+double EnergyAlgorithm::fitness1(vector <double> cords)
+{
+    fill1(cords);
     calculate();
     double cost = allBus.cost();
 
@@ -474,6 +502,14 @@ void EnergyAlgorithm::parseBusData()
         }
         else
         {
+            if (busElement->FirstChildElement("compensation")) {
+                bus->isWithCompensation = true;
+
+                bus->setCompensationLimits(
+                    atof(busElement->FirstChildElement("compensation")->FirstChildElement("min-value")->GetText()),
+                    atof(busElement->FirstChildElement("compensation")->FirstChildElement("max-value")->GetText())
+                );
+            }
             notGenBus.addBus(bus);
         }
 
