@@ -13,6 +13,13 @@ float fitness_wrap2(GAGenome & g)
 	return ret;
 }
 
+float fitness_wrap3(GAGenome & g)
+{
+    double ret = algorithm2->fitness2(algorithm2->genomeToVector(g));
+
+    return ret;
+}
+
 EnergyAlgorithmGA::EnergyAlgorithmGA(string input, string output):
         EnergyAlgorithm(input, output)
 {
@@ -28,16 +35,6 @@ EnergyAlgorithmGA::EnergyAlgorithmGA(string input, string output):
         alleles.add(powerLimits[0], powerLimits[1], GAAllele::INCLUSIVE, GAAllele::INCLUSIVE);
     }
 
-    for (int i = 0, size = notGenBus.size(); i < size; ++i)
-    {
-        EnergyBus * bus = notGenBus[i];
-        if (bus->isWithCompensation)
-        {
-            double * limits = bus->getCompensationLimits();
-            alleles.add(limits[0], limits[1], GAAllele::INCLUSIVE, GAAllele::INCLUSIVE);
-        }
-    }
-
     GARealGenome genome(alleles, fitness_wrap2);
     genome.crossover(GARealGenome::OnePointCrossover);
 
@@ -45,10 +42,10 @@ EnergyAlgorithmGA::EnergyAlgorithmGA(string input, string output):
 
     GAParameterList params;
     GASteadyStateGA::registerDefaultParameters(params);
-    params.set(gaNnGenerations, 100);
+    params.set(gaNnGenerations, 150);
     params.set(gaNpopulationSize, 20);
-    params.set(gaNpMutation, 0.7);
-    params.set(gaNpCrossover, 0.6);
+    params.set(gaNpMutation, 0.6);
+    params.set(gaNpCrossover, 0.5);
     handle->parameters(params);
 
     // @todo можно здесь подумать
@@ -81,6 +78,43 @@ void EnergyAlgorithmGA::solve()
 
     handle->evolve();
     fill(genomeToVector(handle->statistics().bestIndividual()));
+    calculate();
+
+    stop_solve();
+
+    GARealAlleleSetArray alleles;
+    for (int i = 0; i < 5; ++i)
+    {
+        alleles.add(0, 10, GAAllele::INCLUSIVE, GAAllele::INCLUSIVE);
+        alleles.add(0, notGenBus.size() - 1, GAAllele::INCLUSIVE, GAAllele::INCLUSIVE);
+    }
+
+    GARealGenome genome(alleles, fitness_wrap3);
+    genome.crossover(GARealGenome::OnePointCrossover);
+
+    handle = new GASteadyStateGA(genome);
+
+    GAParameterList params;
+    GASteadyStateGA::registerDefaultParameters(params);
+    params.set(gaNnGenerations, 100);
+    params.set(gaNpopulationSize, 20);
+    params.set(gaNpMutation, 0.7);
+    params.set(gaNpCrossover, 0.6);
+    handle->parameters(params);
+
+    // @todo можно здесь подумать
+    GANoScaling scaling;
+    handle->scaling(scaling);
+
+    GATournamentSelector selector;
+    handle->selector(selector);
+
+
+
+    start_solve();
+
+    handle->evolve();
+    fill2(genomeToVector(handle->statistics().bestIndividual()));
     calculate();
 
     stop_solve();

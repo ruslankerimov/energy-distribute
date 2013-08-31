@@ -120,7 +120,7 @@ EnergyBus * EnergyBus::setReactivePowerGen(double value)
 
 double EnergyBus::getReactivePowerLoad()
 {
-    return reactivePowerLoad - compensation;
+    return reactivePowerLoad - (isWithCompensation ? compensation : 0);
 }
 
 EnergyBus * EnergyBus::setReactivePowerLoad(double value)
@@ -214,6 +214,23 @@ bool EnergyBus::isGeneratorBus()
 bool EnergyBus::isBalancedBus()
 {
     return code == 1;
+}
+
+bool EnergyBus::isCompensationEnabled()
+{
+    return isWithCompensation;
+}
+
+EnergyBus * EnergyBus::enableCompesation()
+{
+    isWithCompensation = true;
+    return this;
+}
+
+EnergyBus * EnergyBus::disableCompesation()
+{
+    isWithCompensation = false;
+    return this;
 }
 
 bool EnergyBus::checkRestractions()

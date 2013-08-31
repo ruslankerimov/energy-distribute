@@ -20,6 +20,7 @@ private:
     double compensation, minCompensation, maxCompensation;
     vector <double*> costCoefficents;
     vector <EnergyBus*> links;
+    bool isWithCompensation;
 
 public:
     EnergyBus(int, int);
@@ -82,7 +83,11 @@ public:
 
     bool isBalancedBus();
 
-    bool isWithCompensation;
+    bool isCompensationEnabled();
+
+    EnergyBus * enableCompesation();
+
+    EnergyBus * disableCompesation();
 
     bool checkRestractions();
 
