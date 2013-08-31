@@ -13,13 +13,6 @@ float fitness_wrap2(GAGenome & g)
 	return ret;
 }
 
-float fitness_wrap3(GAGenome & g)
-{
-    double ret = algorithm2->fitness1(algorithm2->genomeToVector(g));
-
-    return ret;
-}
-
 EnergyAlgorithmGA::EnergyAlgorithmGA(string input, string output):
         EnergyAlgorithm(input, output)
 {
@@ -35,6 +28,16 @@ EnergyAlgorithmGA::EnergyAlgorithmGA(string input, string output):
         alleles.add(powerLimits[0], powerLimits[1], GAAllele::INCLUSIVE, GAAllele::INCLUSIVE);
     }
 
+    for (int i = 0, size = notGenBus.size(); i < size; ++i)
+    {
+        EnergyBus * bus = notGenBus[i];
+        if (bus->isWithCompensation)
+        {
+            double * limits = bus->getCompensationLimits();
+            alleles.add(limits[0], limits[1], GAAllele::INCLUSIVE, GAAllele::INCLUSIVE);
+        }
+    }
+
     GARealGenome genome(alleles, fitness_wrap2);
     genome.crossover(GARealGenome::OnePointCrossover);
 
@@ -44,7 +47,7 @@ EnergyAlgorithmGA::EnergyAlgorithmGA(string input, string output):
     GASteadyStateGA::registerDefaultParameters(params);
     params.set(gaNnGenerations, 100);
     params.set(gaNpopulationSize, 20);
-    params.set(gaNpMutation, 0.4);
+    params.set(gaNpMutation, 0.7);
     params.set(gaNpCrossover, 0.6);
     handle->parameters(params);
 
@@ -64,7 +67,7 @@ vector <double> EnergyAlgorithmGA::genomeToVector(const GAGenome & g)
     vector <double> cords;
     GARealGenome& genome = (GARealGenome&) g;
 
-    for (int i = 0, size = genome.size(); i < size; ++i) // @todo
+    for (int i = 0, size = genome.size(); i < size; ++i)
     {
         cords.push_back(genome.gene(i));
     }
@@ -79,45 +82,6 @@ void EnergyAlgorithmGA::solve()
     handle->evolve();
     fill(genomeToVector(handle->statistics().bestIndividual()));
     calculate();
-    display();
-    report();
-
-
-
-    GARealAlleleSetArray alleles;
-    for (int i = 0, size = notGenBus.size(); i < size; ++i)
-    {
-        EnergyBus * bus = notGenBus[i];
-        if (bus->isWithCompensation)
-        {
-            double * limits = bus->getCompensationLimits();
-            alleles.add(limits[0], limits[1], GAAllele::INCLUSIVE, GAAllele::INCLUSIVE);
-        }
-    }
-
-    GARealGenome genome(alleles, fitness_wrap3);
-    genome.crossover(GARealGenome::OnePointCrossover);
-
-    handle = new GASteadyStateGA(genome);
-
-    GAParameterList params;
-    GASteadyStateGA::registerDefaultParameters(params);
-    params.set(gaNnGenerations, 100);
-    params.set(gaNpopulationSize, 20);
-    params.set(gaNpMutation, 0.4);
-    params.set(gaNpCrossover, 0.6);
-    handle->parameters(params);
-
-    // @todo можно здесь подумать
-    GANoScaling scaling;
-    handle->scaling(scaling);
-
-    GATournamentSelector selector;
-    handle->selector(selector);
-    handle->evolve();
-    fill1(genomeToVector(handle->statistics().bestIndividual()));
-    calculate();
-
 
     stop_solve();
 }

@@ -36,16 +36,13 @@ void EnergyAlgorithm::stop_solve()
 
 void EnergyAlgorithm::fill(vector <double> cords)
 {
+    int j = 0;
+
     for (int i = 0, size = genWithoutBalanceBus.size(); i < size; ++i)
     {
         EnergyBus* bus = genWithoutBalanceBus[i];
-        bus->setActivePowerGen(cords[i]);
+        bus->setActivePowerGen(cords[j++]);
     }
-}
-
-void EnergyAlgorithm::fill1(vector <double> cords)
-{
-    int j = 0;
 
     for (int i = 0, size = notGenBus.size(); i < size; ++i)
     {
@@ -59,21 +56,6 @@ void EnergyAlgorithm::fill1(vector <double> cords)
 double EnergyAlgorithm::fitness(vector <double> cords)
 {
     fill(cords);
-    calculate();
-    double cost = allBus.cost();
-
-    // @todo, можно от этого шага избивиться
-    if ( ! allBus.checkRestractions())
-    {
-        cost += 100000;
-    }
-
-    return 1 / cost;
-}
-
-double EnergyAlgorithm::fitness1(vector <double> cords)
-{
-    fill1(cords);
     calculate();
     double cost = allBus.cost();
 
