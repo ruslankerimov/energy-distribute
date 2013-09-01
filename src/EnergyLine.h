@@ -16,6 +16,8 @@ private:
     EnergyBus * to;
     float R, X;
     double G, B;
+    bool isWithRegulation;
+    double regulation;
 public:
     EnergyLine(EnergyBus *, EnergyBus *, double, double);
 
@@ -34,6 +36,16 @@ public:
     EnergyBus * getFrom();
 
     EnergyBus * getTo();
+
+    bool isRegulationEnabled();
+
+    EnergyLine * enableRegulation();
+
+    EnergyLine * disableRegulation();
+
+    EnergyLine * setRegulation(double);
+
+    double getRegulation();
 
     void display();
 };

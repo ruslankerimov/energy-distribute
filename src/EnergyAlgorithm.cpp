@@ -49,24 +49,24 @@ void EnergyAlgorithm::fill2(vector <double> cords)
 {
     int j = 0;
 
-    for (int i = 0, size = notGenBus.size(); i < size; ++i)
+    for (int i = 0, size = lines.size(); i < size; ++i)
     {
-        notGenBus[i]->disableCompesation();
+        lines[i]->disableRegulation();
     }
 
     for (int i = 0; i < 5; ++i)
     {
-        double compensation = cords[j++];
+        double regulation = cords[j++];
         int n = cords[j++];
 
-        while (notGenBus[n]->isCompensationEnabled()) {
+        while (lines[n]->isRegulationEnabled()) {
             ++n;
-            n %= notGenBus.size();
+            n %= lines.size();
         }
 
-        notGenBus[n]
-            ->enableCompesation()
-            ->setCompensation(compensation);
+        lines[n]
+            ->enableRegulation()
+            ->setRegulation(regulation);
     }
 }
 
@@ -142,6 +142,7 @@ void EnergyAlgorithm::calculate()
                 double Bkm = line->getB();
                 double Gkm = line->getG();
                 double Dm, Vm;
+                double Dkm;
 
                 if (to == kBus)
                 {
@@ -150,8 +151,9 @@ void EnergyAlgorithm::calculate()
 
                 Dm = to->getAngle();
                 Vm = to->getVoltage();
+                Dkm = Dk - Dm + (line->isRegulationEnabled() ? (from->getNo() >= to->getNo() ? 1 : -1) * line->getRegulation() : 0);
 
-                ret -= Vk * Vm * (Bkm * cos(Dk - Dm) - Gkm * sin(Dk - Dm));
+                ret -= Vk * Vm * (Bkm * cos(Dkm) - Gkm * sin(Dkm));
             }
 
             kBus->setReactivePowerGen(ret * 100);
@@ -270,6 +272,7 @@ double EnergyAlgorithm::getYCell(int i, int j, vector <double> x)
     double Vm = x[m + n];
     double Dk = x[k];
     double Dm = x[m];
+    double Dkm = Dk - Dm + (kmLine->isRegulationEnabled() ? (k >= m ? 1 : -1) * kmLine->getReactivePower() : 0);
     double Bkk = kBus->getB();
     double Gkk = kBus->getG();
     double Bkm = kmLine ? kmLine->getB() : 0;
@@ -351,26 +354,28 @@ double EnergyAlgorithm::getYCell(int i, int j, vector <double> x)
             Dm = x[to->getNo() - 1]; // @todo;
             Vm = x[n + to->getNo() -1];
 
+            Dkm = Dk - Dm + (line->isRegulationEnabled() ? (k >= m ? 1 : -1) * line->getRegulation() : 0);
+
             if (isForP)
             {
                 if (isDelta)
                 {
-                    ret += Vk * Vm * (Gkm * sin(Dk - Dm) - Bkm * cos(Dk - Dm));
+                    ret += Vk * Vm * (Gkm * sin(Dkm) - Bkm * cos(Dkm));
                 }
                 else
                 {
-                    ret -= Vm * (Gkm * cos(Dk - Dm) + Bkm * sin(Dk - Dm));
+                    ret -= Vm * (Gkm * cos(Dkm) + Bkm * sin(Dkm));
                 }
             }
             else
             {
                 if (isDelta)
                 {
-                    ret -= Vk * Vm * (Bkm * sin(Dk - Dm) + Gkm * cos(Dk - Dm));
+                    ret -= Vk * Vm * (Bkm * sin(Dkm) + Gkm * cos(Dkm));
                 }
                 else
                 {
-                    ret += Vm * (Bkm * cos(Dk - Dm) - Gkm * sin(Dk - Dm));
+                    ret += Vm * (Bkm * cos(Dkm) - Gkm * sin(Dkm));
                 }
             }
         }
@@ -382,12 +387,12 @@ double EnergyAlgorithm::getYCell(int i, int j, vector <double> x)
             if (isDelta)
             {
                 ret = Vk * Vm
-                        * (-Gkm * sin(Dk - Dm) + Bkm * cos(Dk - Dm));
+                        * (-Gkm * sin(Dkm) + Bkm * cos(Dkm));
             }
             else
             {
                 ret = -Vk
-                        * (Gkm * cos(Dk - Dm) + Bkm * sin(Dk - Dm));
+                        * (Gkm * cos(Dkm) + Bkm * sin(Dkm));
             }
         }
         else
@@ -395,12 +400,12 @@ double EnergyAlgorithm::getYCell(int i, int j, vector <double> x)
             if (isDelta)
             {
                 ret = Vk * Vm
-                        * (Bkm * sin(Dk - Dm) + Gkm * cos(Dk - Dm));
+                        * (Bkm * sin(Dkm) + Gkm * cos(Dkm));
             }
             else
             {
                 ret = Vk
-                        * (Bkm * cos(Dk - Dm) - Gkm * sin(Dk - Dm));
+                        * (Bkm * cos(Dkm) - Gkm * sin(Dkm));
             }
         }
     }

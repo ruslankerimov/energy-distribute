@@ -42,10 +42,10 @@ EnergyAlgorithmGA::EnergyAlgorithmGA(string input, string output):
 
     GAParameterList params;
     GASteadyStateGA::registerDefaultParameters(params);
-    params.set(gaNnGenerations, 150);
+    params.set(gaNnGenerations, 100);
     params.set(gaNpopulationSize, 20);
-    params.set(gaNpMutation, 0.6);
-    params.set(gaNpCrossover, 0.5);
+    params.set(gaNpMutation, 0.7);
+    params.set(gaNpCrossover, 0.6);
     handle->parameters(params);
 
     // @todo можно здесь подумать
@@ -85,8 +85,8 @@ void EnergyAlgorithmGA::solve()
     GARealAlleleSetArray alleles;
     for (int i = 0; i < 5; ++i)
     {
-        alleles.add(0, 10, GAAllele::INCLUSIVE, GAAllele::INCLUSIVE);
-        alleles.add(0, notGenBus.size() - 1, GAAllele::INCLUSIVE, GAAllele::INCLUSIVE);
+        alleles.add(-5, 5, GAAllele::INCLUSIVE, GAAllele::INCLUSIVE);
+        alleles.add(0, lines.size() - 1, GAAllele::INCLUSIVE, GAAllele::INCLUSIVE);
     }
 
     GARealGenome genome(alleles, fitness_wrap3);
@@ -96,7 +96,7 @@ void EnergyAlgorithmGA::solve()
 
     GAParameterList params;
     GASteadyStateGA::registerDefaultParameters(params);
-    params.set(gaNnGenerations, 100);
+    params.set(gaNnGenerations, 50);
     params.set(gaNpopulationSize, 20);
     params.set(gaNpMutation, 0.7);
     params.set(gaNpCrossover, 0.6);
